@@ -89,9 +89,9 @@ InfoTab:AddButton({
 })
 
 InfoTab:AddButton({
-    Name = "Current version: 0.2",
+    Name = "Current version: 0.3",
     Callback = function()
-        print("Version: 0.2")
+        print("Version: 0.3")
     end
 })
 
