@@ -74,6 +74,19 @@ ToolsTab:AddButton({
 })
 
 ToolsTab:AddButton({
+    Name = "1000+ GUI",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/SEBB-THEBEGINNER/Sebb-Fanmade-Update-for-Basic-PvP/refs/heads/main/testing"))()
+    end
+})
+
+ToolsTab:AddButton({
+    Name = "Trolling",
+    Callback = function()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/kigredns/SanderXV4.2.2/refs/heads/main/New.lua'))() 
+end
+
+ToolsTab:AddButton({
     Name = "Aimbot V2",
     Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/yzeedw/Mortalv2-main/main/UNIVERSAL%20AIMBOT%20V2"))()
