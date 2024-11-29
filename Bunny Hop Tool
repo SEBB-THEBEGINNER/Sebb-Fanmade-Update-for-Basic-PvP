@@ -1,0 +1,16 @@
+local Tool = script.Parent
+
+Tool.Activated:Connect(function()
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            local humanoid = player.Character.Humanoid
+
+            coroutine.wrap(function()
+                while Tool:IsDescendantOf(game) do
+                    humanoid.Jump = true
+                    wait(0.3)
+                end
+            end)()
+        end
+    end
+end)
