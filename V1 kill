@@ -1,106 +1,100 @@
--- Create the GUI
+-- Create GUI
 local player = game.Players.LocalPlayer
 local screenGui = Instance.new("ScreenGui")
-screenGui.Parent = player.PlayerGui
+screenGui.Parent = player:WaitForChild("PlayerGui")
 
--- Create the button for the One Hit KO Punch
-local button = Instance.new("TextButton")
-button.Size = UDim2.new(0, 200, 0, 50)
-button.Position = UDim2.new(0.5, -100, 0.5, -25)
-button.Text = "Equip One Hit KO Punch"
-button.Parent = screenGui
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 300, 0, 200)
+frame.Position = UDim2.new(0.5, -150, 0.5, -100)
+frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+frame.Parent = screenGui
 
--- Create the dropdown menu button
-local dropdownButton = Instance.new("TextButton")
-dropdownButton.Size = UDim2.new(0, 150, 0, 40)
-dropdownButton.Position = UDim2.new(0.5, -75, 0.5, 60)
-dropdownButton.Text = "Toggle GUI"
-dropdownButton.Parent = screenGui
+-- Button to get the item
+local getItemButton = Instance.new("TextButton")
+getItemButton.Size = UDim2.new(0, 200, 0, 50)
+getItemButton.Position = UDim2.new(0.5, -100, 0.3, -25)
+getItemButton.Text = "Get Item"
+getItemButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+getItemButton.Parent = frame
 
--- Create the dropdown menu container (hidden by default)
-local dropdownMenu = Instance.new("Frame")
-dropdownMenu.Size = UDim2.new(0, 200, 0, 0)
-dropdownMenu.Position = UDim2.new(0.5, -100, 0.5, 100)
-dropdownMenu.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-dropdownMenu.Visible = false
-dropdownMenu.Parent = screenGui
+-- Dropdown for selecting the damage amount
+local damageDropdown = Instance.new("TextButton")
+damageDropdown.Size = UDim2.new(0, 200, 0, 50)
+damageDropdown.Position = UDim2.new(0.5, -100, 0.6, -25)
+damageDropdown.Text = "Select Damage"
+damageDropdown.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+damageDropdown.Parent = frame
 
--- Add the button to the dropdown menu
-local dropdownOption = Instance.new("TextButton")
-dropdownOption.Size = UDim2.new(0, 200, 0, 40)
-dropdownOption.Position = UDim2.new(0, 0, 0, 0)
-dropdownOption.Text = "Equip One Hit KO Punch"
-dropdownOption.Parent = dropdownMenu
+-- Add a dropdown menu with damage options
+local Tab = {} -- Placeholder for Tab function to add the dropdown (assuming some Tab system is already in place)
+Tab.AddDropdown = function(options)
+    local dropdownButton = Instance.new("TextButton")
+    dropdownButton.Size = UDim2.new(0, 200, 0, 50)
+    dropdownButton.Position = UDim2.new(0.5, -100, 0.7, -25)
+    dropdownButton.Text = options.Name
+    dropdownButton.BackgroundColor3 = Color3.fromRGB(0, 0, 255)
+    dropdownButton.Parent = frame
 
--- Make the dropdown button toggle the menu visibility
-dropdownButton.MouseButton1Click:Connect(function()
-    dropdownMenu.Visible = not dropdownMenu.Visible
-end)
+    -- Display options when clicked
+    dropdownButton.MouseButton1Click:Connect(function()
+        -- Cycle through options and call callback with selected value
+        local index = table.find(options.Options, options.Default)
+        index = index == #options.Options and 1 or index + 1
+        options.Callback(options.Options[index])
+        dropdownButton.Text = options.Options[index]
+    end)
+end
 
--- Make the button inside the dropdown menu give the tool
-dropdownOption.MouseButton1Click:Connect(function()
-    -- Check if the player already has the tool
-    if not player.Backpack:FindFirstChild("One Hit KO Punch") then
-        -- Create the One Hit KO Punch tool
-        local tool = Instance.new("Tool")
-        tool.Name = "One Hit KO Punch"
-        tool.RequiresHandle = true
-
-        -- Create the handle part
-        local handle = Instance.new("Part")
-        handle.Size = Vector3.new(1, 1, 1)
-        handle.Anchored = false
-        handle.CanCollide = false
-        handle.BrickColor = BrickColor.new("Bright red")
-        handle.Name = "Handle"
-        handle.Parent = tool
-
-        -- Function to activate the tool and deal massive damage
-        tool.Activated:Connect(function()
-            local character = player.Character
-            if character and character:FindFirstChild("HumanoidRootPart") then
-                local mouse = player:GetMouse()
-                local target = mouse.Target
-
-                -- Check if the target is another player's character
-                if target and target.Parent and target.Parent:FindFirstChild("Humanoid") and target.Parent ~= character then
-                    local humanoid = target.Parent:FindFirstChild("Humanoid")
-                    if humanoid then
-                        -- Deal massive damage (99999999999999999999)
-                        humanoid:TakeDamage(99999999999999999999)
-                    end
-                end
-            end
-        end)
-
-        -- Give the tool to the player
-        tool.Parent = player.Backpack
-    else
-        print("You already have the One Hit KO Punch!")
+Tab.AddDropdown({
+    Name = "Damage Selection",
+    Default = "1", -- Default damage option
+    Options = {"1", "2", "999999999999999999"}, -- Options include an insane damage value
+    Callback = function(Value)
+        print("Selected Damage: " .. Value)
     end
-end)
+})
 
--- Make the button draggable
-local dragging = false
-local dragInput, dragStart, startPos
+-- Handle item acquisition when button is clicked
+getItemButton.MouseButton1Click:Connect(function()
+    local tool = Instance.new("Tool")
+    tool.Name = "Instakill Sword"
+    tool.RequiresHandle = true
+    tool.Parent = player.Backpack
 
-button.MouseButton1Down:Connect(function(input)
-    -- Start dragging
-    dragging = true
-    dragStart = input.Position
-    startPos = button.Position
-    input.Changed:Connect(function()
-        if input.UserInputState == Enum.UserInputState.End then
-            -- Stop dragging
-            dragging = false
+    -- Add the item functionality to deal damage
+    local handle = Instance.new("Part")
+    handle.Name = "Handle"
+    handle.Size = Vector3.new(1, 5, 1)
+    handle.Color = Color3.fromRGB(255, 0, 0)
+    handle.Anchored = false
+    handle.Parent = tool
+
+    tool.Activated:Connect(function()
+        -- Check if the player has selected a damage value
+        local damageValue = "999999999999999999" -- Default damage for instakill
+
+        -- Here you can get the selected damage value from the dropdown
+        -- For simplicity, I'll use the default value
+        if damageDropdown.Text == "999999999999999999" then
+            damageValue = "999999999999999999"  -- Assign the insane damage from the dropdown
+        elseif damageDropdown.Text == "2" then
+            damageValue = "2"  -- Use lower damage if "2" is selected
+        end
+
+        -- Raycast to detect an opponent
+        local rayOrigin = handle.Position
+        local rayDirection = (player.Character.HumanoidRootPart.Position + player.Character.HumanoidRootPart.CFrame.LookVector * 5) - rayOrigin
+        local raycastResult = workspace:Raycast(rayOrigin, rayDirection)
+
+        if raycastResult then
+            local hit = raycastResult.Instance
+            -- If we hit an opponent, apply the damage
+            if hit.Parent:FindFirstChild("Humanoid") then
+                local opponentHumanoid = hit.Parent.Humanoid
+                -- Apply damage and kill instantly
+                opponentHumanoid.Health = 0
+                print("Opponent killed with " .. damageValue .. " damage")
+            end
         end
     end)
-end)
-
-button.MouseMove:Connect(function(input)
-    if dragging then
-        -- Update button position as the mouse moves
-        local delta = input.Position - dragStart
-        button.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
 end)
