@@ -1,0 +1,33 @@
+-- Hook function to override wait behavior
+local g = hookfunction(wait, function(seconds)
+    return g(0)  -- Calls the original wait with 0 delay
+end)
+
+local visualg = hookfunction(wait, function(seconds)
+    return g(0.1)  -- Calls the original wait with 0.1 delay for visual updates
+end)
+
+-- Assuming you have a 'tool' object that the player can use, like a weapon or ability
+tool.Activated:Connect(function()
+    -- Check if cooldown is active
+    if cooldown == true then
+        -- Assuming the player has an inventory table, where each item has a 'Value'
+        local player = game.Players.LocalPlayer
+        local inventory = player.Backpack:GetChildren() -- Get all items in the player's backpack (inventory)
+        
+        for _, item in pairs(inventory) do
+            if item:FindFirstChild("Value") then
+                -- Modify the item values based on footlevel (example value, adjust based on actual game mechanics)
+                item.Value = item.Value + footlevel.Value
+            end
+        end
+        
+        cooldown = false
+        
+        -- Use the overridden wait function with visual delay
+        visualg(0.1)  -- Short wait for visual updates
+        
+        -- Reset cooldown
+        cooldown = true
+    end
+end)
