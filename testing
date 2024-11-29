@@ -1,0 +1,32 @@
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+local Window = OrionLib:MakeWindow({
+    Name = "TrengleHub Integration",
+    HidePremium = false,
+    SaveConfig = true,
+    ConfigFolder = "TrengleHubConfig"
+})
+
+local Tab = Window:MakeTab({
+    Name = "TrengleHub",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+Tab:AddButton({
+    Name = "Load TrengleHub",
+    Callback = function()
+        loadstring(game:HttpGet(('https://raw.githubusercontent.com/Fantemil/Trenglehub/main/trenglehub.lua')))()
+    end    
+})
+
+Tab:AddToggle({
+    Name = "Enable Feature",
+    Default = false,
+    Callback = function(Value)
+        -- Add logic to handle the toggle state change
+        print("Feature enabled: ", Value)
+    end    
+})
+
+OrionLib:Init()
