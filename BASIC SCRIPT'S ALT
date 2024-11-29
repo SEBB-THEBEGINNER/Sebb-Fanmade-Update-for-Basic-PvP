@@ -73,6 +73,13 @@ ToolsTab:AddButton({
     end
 })
 
+ToolsTab:AddButton({
+    Name = "Aimbot V2",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/yzeedw/Mortalv2-main/main/UNIVERSAL%20AIMBOT%20V2"))()
+    end
+})
+
 -- Create the second tab (Info)
 local InfoTab = Window:MakeTab({
     Name = "INFO",
@@ -89,9 +96,9 @@ InfoTab:AddButton({
 })
 
 InfoTab:AddButton({
-    Name = "Current version: 0.3",
+    Name = "Current version: 0.5",
     Callback = function()
-        print("Version: 0.3")
+        print("Version: 0.5")
     end
 })
 
