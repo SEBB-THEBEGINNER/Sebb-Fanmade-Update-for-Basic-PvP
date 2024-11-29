@@ -1,39 +1,56 @@
--- One Hit KO Punch Script
-local tool = Instance.new("Tool")
-tool.Name = "One Hit KO Punch"
-tool.RequiresHandle = true
+-- Create the GUI
+local player = game.Players.LocalPlayer
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = player.PlayerGui
 
-local handle = Instance.new("Part")
-handle.Size = Vector3.new(1, 1, 1)
-handle.Anchored = false
-handle.CanCollide = false
-handle.BrickColor = BrickColor.new("Bright red")
-handle.Name = "Handle"
-handle.Parent = tool
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(0, 200, 0, 50)
+button.Position = UDim2.new(0.5, -100, 0.5, -25)
+button.Text = "Equip One Hit KO Punch"
+button.Parent = screenGui
 
--- When the player clicks the punch tool, it will deal damage instantly to the opponent
-tool.Activated:Connect(function()
-    -- Get the player's character and mouse position
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    if character and character:FindFirstChild("HumanoidRootPart") then
-        local mouse = player:GetMouse()
-        local target = mouse.Target
-        
-        -- Check if the target is another player's character and is not the player themself
-        if target and target.Parent and target.Parent:FindFirstChild("Humanoid") and target.Parent ~= character then
-            local humanoid = target.Parent:FindFirstChild("Humanoid")
-            if humanoid then
-                -- Kill the target by setting their health to 0
-                humanoid.Health = 0
+-- Function to give the tool to the player
+local function giveTool()
+    -- Check if the player already has the tool
+    if not player.Backpack:FindFirstChild("One Hit KO Punch") then
+        -- Create the One Hit KO Punch tool
+        local tool = Instance.new("Tool")
+        tool.Name = "One Hit KO Punch"
+        tool.RequiresHandle = true
+
+        -- Create the handle part
+        local handle = Instance.new("Part")
+        handle.Size = Vector3.new(1, 1, 1)
+        handle.Anchored = false
+        handle.CanCollide = false
+        handle.BrickColor = BrickColor.new("Bright red")
+        handle.Name = "Handle"
+        handle.Parent = tool
+
+        -- Function to activate the tool and deal instant damage
+        tool.Activated:Connect(function()
+            local character = player.Character
+            if character and character:FindFirstChild("HumanoidRootPart") then
+                local mouse = player:GetMouse()
+                local target = mouse.Target
+
+                -- Check if the target is another player's character
+                if target and target.Parent and target.Parent:FindFirstChild("Humanoid") and target.Parent ~= character then
+                    local humanoid = target.Parent:FindFirstChild("Humanoid")
+                    if humanoid then
+                        -- Kill the target by setting their health to 0
+                        humanoid.Health = 0
+                    end
+                end
             end
-        end
-    end
-end)
+        end)
 
--- Give the tool to the player when they spawn
-game.Players.PlayerAdded:Connect(function(player)
-    player.CharacterAdded:Connect(function(character)
-        tool:Clone().Parent = character
-    end)
-end)
+        -- Give the tool to the player
+        tool.Parent = player.Backpack
+    else
+        print("You already have the One Hit KO Punch!")
+    end
+end
+
+-- Button click event to give the tool
+button.MouseButton1Click:Connect(giveTool)
