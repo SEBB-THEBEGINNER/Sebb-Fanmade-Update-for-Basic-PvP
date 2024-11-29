@@ -1,0 +1,116 @@
+-- Initialize Library
+local Library = loadstring(game:HttpGet("https://example.com/library"))()  -- Replace with actual library URL
+local Window = Library.CreateLib("TITLE", "DarkTheme")
+
+-- Create Tools Tab
+local Tab = Window:NewTab("Tools")
+
+-- Create HomeFrame in the Tools Tab
+local HomeFrame = Instance.new("Frame")
+HomeFrame.Parent = Tab
+HomeFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+HomeFrame.BorderColor3 = Color3.fromRGB(255, 0, 0)
+HomeFrame.BorderSizePixel = 3
+HomeFrame.Size = UDim2.new(0, 400, 0, 247)
+HomeFrame.Visible = true
+
+-- Create FlyButton in the Tools Tab
+local FlyButton = Instance.new("TextButton")
+FlyButton.Parent = HomeFrame
+FlyButton.BackgroundColor3 = Color3.fromRGB(0, 0, 255) -- Blue
+FlyButton.Position = UDim2.new(0, 10, 0, 10)
+FlyButton.Size = UDim2.new(0, 100, 0, 40)
+FlyButton.Text = "Fly"
+FlyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Create hitboxButton in the Tools Tab
+local hitboxButton = Instance.new("TextButton")
+hitboxButton.Parent = HomeFrame
+hitboxButton.BackgroundColor3 = Color3.fromRGB(0, 0, 255) -- Blue
+hitboxButton.Position = UDim2.new(0, 120, 0, 10)
+hitboxButton.Size = UDim2.new(0, 100, 0, 40)
+hitboxButton.Text = "Hitbox"
+hitboxButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Create SpeedButton in the Tools Tab
+local SpeedButton = Instance.new("TextButton")
+SpeedButton.Parent = HomeFrame
+SpeedButton.BackgroundColor3 = Color3.fromRGB(0, 0, 255) -- Blue
+SpeedButton.Position = UDim2.new(0, 10, 0, 60)
+SpeedButton.Size = UDim2.new(0, 100, 0, 40)
+SpeedButton.Text = "Speed"
+SpeedButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Create bighitboxButton in the Tools Tab
+local bighitboxButton = Instance.new("TextButton")
+bighitboxButton.Parent = HomeFrame
+bighitboxButton.BackgroundColor3 = Color3.fromRGB(0, 0, 255) -- Blue
+bighitboxButton.Position = UDim2.new(0, 120, 0, 60)
+bighitboxButton.Size = UDim2.new(0, 100, 0, 40)
+bighitboxButton.Text = "Big Hitbox"
+bighitboxButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Create InfJumpButton in the Tools Tab
+local InfJumpButton = Instance.new("TextButton")
+InfJumpButton.Parent = HomeFrame
+InfJumpButton.BackgroundColor3 = Color3.fromRGB(0, 0, 255) -- Blue
+InfJumpButton.Position = UDim2.new(0, 10, 0, 110)
+InfJumpButton.Size = UDim2.new(0, 100, 0, 40)
+InfJumpButton.Text = "Infinite Jump"
+InfJumpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Create IyButton in the Tools Tab
+local IyButton = Instance.new("TextButton")
+IyButton.Parent = HomeFrame
+IyButton.BackgroundColor3 = Color3.fromRGB(0, 0, 255) -- Blue
+IyButton.Position = UDim2.new(0, 120, 0, 110)
+IyButton.Size = UDim2.new(0, 100, 0, 40)
+IyButton.Text = "Iy Button"
+IyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Create EspButton in the Tools Tab
+local EspButton = Instance.new("TextButton")
+EspButton.Parent = HomeFrame
+EspButton.BackgroundColor3 = Color3.fromRGB(0, 0, 255) -- Blue
+EspButton.Position = UDim2.new(0, 10, 0, 160)
+EspButton.Size = UDim2.new(0, 100, 0, 40)
+EspButton.Text = "ESP"
+EspButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Create PingButton in the Tools Tab
+local PingButton = Instance.new("TextButton")
+PingButton.Parent = HomeFrame
+PingButton.BackgroundColor3 = Color3.fromRGB(0, 0, 255) -- Blue
+PingButton.Position = UDim2.new(0, 120, 0, 160)
+PingButton.Size = UDim2.new(0, 100, 0, 40)
+PingButton.Text = "Ping"
+PingButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Create FpsButton in the Tools Tab
+local FpsButton = Instance.new("TextButton")
+FpsButton.Parent = HomeFrame
+FpsButton.BackgroundColor3 = Color3.fromRGB(0, 0, 255) -- Blue
+FpsButton.Position = UDim2.new(0, 10, 0, 210)
+FpsButton.Size = UDim2.new(0, 100, 0, 40)
+FpsButton.Text = "FPS"
+FpsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Create CloseButton in the Tools Tab
+local CloseButton = Instance.new("TextButton")
+CloseButton.Parent = HomeFrame
+CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- Red
+CloseButton.Position = UDim2.new(0, 120, 0, 210)
+CloseButton.Size = UDim2.new(0, 100, 0, 40)
+CloseButton.Text = "Close"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Create UICorner for rounded corners
+local UICorner = Instance.new("UICorner")
+UICorner.Parent = HomeFrame
+
+-- Optional: Add functionality to buttons (e.g., for Fly, Hitbox, etc.)
+FlyButton.MouseButton1Click:Connect(function()
+    -- Implement Fly functionality
+end)
+
+-- Add more button functionalities as needed
