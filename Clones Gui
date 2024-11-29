@@ -1,0 +1,80 @@
+-- LocalScript for cloning avatar and following movements
+
+-- Create GUI elements
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+local screenGui = Instance.new("ScreenGui")
+local frame = Instance.new("Frame")
+local spawnLabel = Instance.new("TextLabel")
+local cloneInput = Instance.new("TextBox")
+local spawnButton = Instance.new("TextButton")
+
+screenGui.Name = "CloneGUI"
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+frame.Size = UDim2.new(0.2, 0, 0.3, 0)
+frame.Position = UDim2.new(0.4, 0, 0.35, 0)
+frame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+frame.Parent = screenGui
+
+spawnLabel.Text = "Number of Clones (1-100):"
+spawnLabel.Size = UDim2.new(1, 0, 0.3, 0)
+spawnLabel.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
+spawnLabel.TextColor3 = Color3.new(1, 1, 1)
+spawnLabel.Parent = frame
+
+cloneInput.PlaceholderText = "Enter number"
+cloneInput.Text = ""
+cloneInput.Size = UDim2.new(1, 0, 0.3, 0)
+cloneInput.Position = UDim2.new(0, 0, 0.35, 0)
+cloneInput.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+cloneInput.TextColor3 = Color3.new(1, 1, 1)
+cloneInput.Parent = frame
+
+spawnButton.Text = "Spawn Clones"
+spawnButton.Size = UDim2.new(1, 0, 0.3, 0)
+spawnButton.Position = UDim2.new(0, 0, 0.7, 0)
+spawnButton.BackgroundColor3 = Color3.new(0.1, 0.7, 0.1)
+spawnButton.TextColor3 = Color3.new(1, 1, 1)
+spawnButton.Parent = frame
+
+-- Function to spawn clones
+local clones = {}
+
+local function createClone()
+    local clone = character:Clone()
+    clone.Parent = workspace
+    clone.HumanoidRootPart.CFrame = character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -#clones - 2)
+    table.insert(clones, clone)
+
+    -- Mimic movements
+    game:GetService("RunService").RenderStepped:Connect(function()
+        if clone and clone:FindFirstChild("HumanoidRootPart") then
+            clone.HumanoidRootPart.CFrame = character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -#clones - 2)
+        end
+    end)
+end
+
+-- Button logic
+spawnButton.MouseButton1Click:Connect(function()
+    local count = tonumber(cloneInput.Text)
+    if count and count > 0 and count <= 100 then
+        -- Clear existing clones
+        for _, clone in pairs(clones) do
+            if clone and clone.Parent then
+                clone:Destroy()
+            end
+        end
+        clones = {}
+
+        -- Spawn new clones
+        for i = 1, count do
+            createClone()
+        end
+    else
+        spawnLabel.Text = "Invalid number! (1-100)"
+        wait(2)
+        spawnLabel.Text = "Number of Clones (1-100):"
+    end
+end)
