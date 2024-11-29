@@ -80,6 +80,13 @@ ToolsTab:AddButton({
     end
 })
 
+ToolsTab:AddButton({
+    Name = "Keyboard",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/advxzivhsjjdhxhsidifvsh/mobkeyboard/main/main.txt", true))() 
+    end
+})
+
 -- Create the second tab (Info)
 local InfoTab = Window:MakeTab({
     Name = "INFO",
