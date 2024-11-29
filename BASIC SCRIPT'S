@@ -1,0 +1,48 @@
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("BASIC SCRIPT'S", "DarkTheme")
+
+-- Tab 1: Tools
+local Tab1 = Window:NewTab("TOOLS")
+local Section1 = Tab1:NewSection("Tools")
+
+-- Fly Button
+Section1:NewButton("Fly", "Activates Fly Script", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"))()
+end)
+
+-- Big Hitbox Button
+Section1:NewButton("Big Hitbox", "Activates Big Hitbox Script", function()
+    loadstring(game:HttpGet("https://scriptblox.com/raw/Universal-Script-Update-script-hitbox-9326"))()
+end)
+
+-- Infinite Jumps Button
+Section1:NewButton("Inf Jumps", "Activates Infinite Jumps", function()
+    local InfiniteJumpEnabled = true
+    game:GetService("UserInputService").JumpRequest:connect(function()
+        if InfiniteJumpEnabled then
+            game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass'Humanoid':ChangeState("Jumping")
+        end
+    end)
+end)
+
+-- Infinite Yield Button
+Section1:NewButton("Inf Yield", "Activates Infinite Yield", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+end)
+
+-- ESP Button
+Section1:NewButton("ESP", "Activates ESP", function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/Lucasfin000/SpaceHub/main/UESP'))()
+end)
+
+-- Fe Emotes Button
+Section1:NewButton("Fe Emotes", "Activates Fe Emotes Script", function()
+    loadstring(game:HttpGet("https://pastebin.com/raw/eCpipCTH"))()
+end)
+
+-- Tab 2: Info
+local Tab2 = Window:NewTab("INFO")
+local Section2 = Tab2:NewSection("Information")
+
+-- Current Version Label
+Section2:NewLabel("Current version: 0.1")
