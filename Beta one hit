@@ -79,12 +79,12 @@ Tab:AddButton({
         -- Script to deal extreme damage when the sword touches another player
         sword.Activated:Connect(function()
             local target = game:GetService("Players"):GetPlayers()
-            for _, player in ipairs(target) do
-                if player.Character and player.Character:FindFirstChild("Humanoid") and player ~= game.Players.LocalPlayer then
-                    local humanoid = player.Character.Humanoid
+            for _, targetPlayer in ipairs(target) do
+                if targetPlayer.Character and targetPlayer.Character:FindFirstChild("Humanoid") and targetPlayer ~= game.Players.LocalPlayer then
+                    local humanoid = targetPlayer.Character.Humanoid
                     -- Apply extreme damage to kill instantly
                     humanoid:TakeDamage(999999999999999999)
-                    print("Killed " .. player.Name .. " with Insta-Kill Sword!")
+                    print("Killed " .. targetPlayer.Name .. " with Insta-Kill Sword!")
                 end
             end
         end)
