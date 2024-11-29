@@ -1,6 +1,9 @@
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
 local Window = Library.CreateLib("BASIC SCRIPT'S", "DarkTheme")
 
+-- Make the window movable by adding this line
+Window:MakeDraggable()
+
 -- Tab 1: Tools
 local Tab1 = Window:NewTab("TOOLS")
 local Section1 = Tab1:NewSection("Tools")
