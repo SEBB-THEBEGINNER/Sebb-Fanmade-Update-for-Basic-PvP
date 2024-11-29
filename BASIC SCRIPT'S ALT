@@ -59,6 +59,13 @@ ToolsTab:AddButton({
     end
 })
 
+ToolsTab:AddButton({
+    Name = "Universal Remove Surface Textures and Effects",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/SEBB-THEBEGINNER/Sebb-Fanmade-Update-for-Basic-PvP/refs/heads/main/Universal%20Remove%20Surface%20Textures%20and%20Effects"))()
+    end
+})
+
 -- Create the second tab (Info)
 local InfoTab = Window:MakeTab({
     Name = "INFO",
