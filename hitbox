@@ -1,0 +1,85 @@
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "HitboxGui"
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 300, 0, 50)
+frame.Position = UDim2.new(0.5, -150, 0.9, -25)
+frame.BackgroundTransparency = 0.3
+frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+frame.BorderSizePixel = 0
+frame.Parent = screenGui
+
+local label = Instance.new("TextLabel")
+label.Size = UDim2.new(1, 0, 1, 0)
+label.Text = "Hitbox Modifier: OFF"
+label.TextColor3 = Color3.fromRGB(255, 255, 255)
+label.BackgroundTransparency = 1
+label.Font = Enum.Font.SourceSans
+label.TextSize = 20
+label.Parent = frame
+
+local function enlargeHitboxes()
+    for _, v in pairs(game.Players:GetPlayers()) do
+        local character = v.Character
+        if character and character:FindFirstChild("Humanoid") then
+            local humanoid = character:FindFirstChild("Humanoid")
+            humanoid.HipWidth = 5
+            humanoid.HipHeight = 5
+            humanoid.BodyWidthScale = 2
+            humanoid.BodyHeightScale = 2
+            
+            local hitboxIndicator = Instance.new("Part")
+            hitboxIndicator.Size = Vector3.new(10, 10, 10)
+            hitboxIndicator.Position = character.HumanoidRootPart.Position
+            hitboxIndicator.Anchored = true
+            hitboxIndicator.CanCollide = false
+            hitboxIndicator.Transparency = 0.5
+            hitboxIndicator.BrickColor = BrickColor.new("Bright red")
+            hitboxIndicator.Parent = character
+        end
+    end
+end
+
+local function resetHitboxes()
+    for _, v in pairs(game.Players:GetPlayers()) do
+        local character = v.Character
+        if character and character:FindFirstChild("Humanoid") then
+            local humanoid = character:FindFirstChild("Humanoid")
+            humanoid.HipWidth = 2
+            humanoid.HipHeight = 2
+            humanoid.BodyWidthScale = 1
+            humanoid.BodyHeightScale = 1
+            
+            local hitboxIndicator = character:FindFirstChild("HitboxIndicator")
+            if hitboxIndicator then
+                hitboxIndicator:Destroy()
+            end
+        end
+    end
+end
+
+local toggleButton = Instance.new("TextButton")
+toggleButton.Size = UDim2.new(0, 200, 0, 40)
+toggleButton.Position = UDim2.new(0.5, -100, 0.5, -20)
+toggleButton.Text = "Toggle Hitbox"
+toggleButton.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleButton.Font = Enum.Font.SourceSans
+toggleButton.TextSize = 18
+toggleButton.Parent = screenGui
+
+local hitboxActive = false
+
+toggleButton.MouseButton1Click:Connect(function()
+    hitboxActive = not hitboxActive
+    if hitboxActive then
+        enlargeHitboxes()
+        label.Text = "Hitbox Modifier: ON"
+    else
+        resetHitboxes()
+        label.Text = "Hitbox Modifier: OFF"
+    end
+end)
