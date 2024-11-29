@@ -1,156 +1,84 @@
--- Create the GUI
-local player = game.Players.LocalPlayer
-local screenGui = Instance.new("ScreenGui")
-screenGui.Parent = player.PlayerGui
+-- Load the Orion Library
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
--- Create the button for the One Hit KO Punch
-local button = Instance.new("TextButton")
-button.Size = UDim2.new(0, 200, 0, 50)
-button.Position = UDim2.new(0.5, -100, 0.5, -25)
-button.Text = "Equip One Hit KO Punch"
-button.Parent = screenGui
+-- Create the window
+local Window = OrionLib:MakeWindow({
+    Name = "Damage Item Script",
+    HidePremium = false,
+    SaveConfig = true,
+    ConfigFolder = "ItemDamageConfig"
+})
 
--- Create the dropdown menu button
-local dropdownButton = Instance.new("TextButton")
-dropdownButton.Size = UDim2.new(0, 150, 0, 40)
-dropdownButton.Position = UDim2.new(0.5, -75, 0.5, 60)
-dropdownButton.Text = "Toggle GUI"
-dropdownButton.Parent = screenGui
+-- Create the Tab
+local Tab = Window:MakeTab({
+    Name = "Item Options",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
 
--- Create the dropdown menu container (hidden by default)
-local dropdownMenu = Instance.new("Frame")
-dropdownMenu.Size = UDim2.new(0, 200, 0, 0)
-dropdownMenu.Position = UDim2.new(0.5, -100, 0.5, 100)
-dropdownMenu.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-dropdownMenu.Visible = false
-dropdownMenu.Parent = screenGui
+-- Create a Section in the Tab
+local Section = Tab:AddSection({
+    Name = "Item Section"
+})
 
--- Add the button to the dropdown menu
-local dropdownOptionKO = Instance.new("TextButton")
-dropdownOptionKO.Size = UDim2.new(0, 200, 0, 40)
-dropdownOptionKO.Position = UDim2.new(0, 0, 0, 0)
-dropdownOptionKO.Text = "Equip One Hit KO Punch"
-dropdownOptionKO.Parent = dropdownMenu
+-- Variable to store the selected damage value
+local selectedDamage = "999999999999999999"  -- Default damage is the highest value
 
--- Add another button for the new item (shootable projectile)
-local dropdownOptionProjectile = Instance.new("TextButton")
-dropdownOptionProjectile.Size = UDim2.new(0, 200, 0, 40)
-dropdownOptionProjectile.Position = UDim2.new(0, 0, 0, 50)
-dropdownOptionProjectile.Text = "Equip Shootable Projectile"
-dropdownOptionProjectile.Parent = dropdownMenu
+-- Add a Dropdown for selecting the damage value
+Tab:AddDropdown({
+    Name = "Select Damage",
+    Default = "999999999999999999",
+    Options = {"1", "2", "999999999999999999"},
+    Callback = function(Value)
+        selectedDamage = Value
+        print("Selected Damage: " .. selectedDamage)
+    end    
+})
 
--- Toggle dropdown menu visibility
-dropdownButton.MouseButton1Click:Connect(function()
-    dropdownMenu.Visible = not dropdownMenu.Visible
-end)
+-- Add a Button to deal damage to all players
+Tab:AddButton({
+    Name = "Kill All Players",
+    Callback = function()
+        -- Loop through all players in the game and apply damage
+        for _, player in pairs(game.Players:GetPlayers()) do
+            -- Ensure we're not dealing damage to the player executing the command
+            if player ~= game.Players.LocalPlayer then
+                -- Check if the player is within range (Infinite reach logic)
+                local character = player.Character
+                if character and character:FindFirstChild("Humanoid") then
+                    -- Apply damage to the player's humanoid
+                    local humanoid = character.Humanoid
+                    humanoid.Health = 0  -- Kill the player instantly
+                    print("Killed " .. player.Name .. " with damage: " .. selectedDamage)
+                end
+            end
+        end
+    end    
+})
 
--- Function to give the One Hit KO Punch tool
-local function giveKOPunchTool()
-    if not player.Backpack:FindFirstChild("One Hit KO Punch") then
-        local tool = Instance.new("Tool")
-        tool.Name = "One Hit KO Punch"
-        tool.RequiresHandle = true
-
-        local handle = Instance.new("Part")
-        handle.Size = Vector3.new(1, 1, 1)
-        handle.Anchored = false
-        handle.CanCollide = false
-        handle.BrickColor = BrickColor.new("Bright red")
-        handle.Name = "Handle"
-        handle.Parent = tool
-
-        tool.Activated:Connect(function()
-            local character = player.Character
-            if character and character:FindFirstChild("HumanoidRootPart") then
-                local mouse = player:GetMouse()
-                local target = mouse.Target
-                if target and target.Parent and target.Parent:FindFirstChild("Humanoid") and target.Parent ~= character then
-                    local humanoid = target.Parent:FindFirstChild("Humanoid")
-                    if humanoid then
-                        humanoid:TakeDamage(99999999999999999999)
+-- Add a Button to activate Infinite Reach and deal damage
+Tab:AddButton({
+    Name = "Activate Infinite Reach",
+    Callback = function()
+        -- Enable Infinite Reach (no range limit)
+        while true do
+            for _, player in pairs(game.Players:GetPlayers()) do
+                -- Make sure the player is not the one executing the command
+                if player ~= game.Players.LocalPlayer then
+                    -- Check if the player is within the reach (infinite)
+                    local character = player.Character
+                    if character and character:FindFirstChild("Humanoid") then
+                        -- Apply damage to the player's humanoid
+                        local humanoid = character.Humanoid
+                        humanoid.Health = 0  -- Instantly kill the player
+                        print("Killed " .. player.Name .. " with infinite reach damage: " .. selectedDamage)
                     end
                 end
             end
-        end)
-
-        tool.Parent = player.Backpack
-    else
-        print("You already have the One Hit KO Punch!")
-    end
-end
-
--- Function to give the Shootable Projectile tool
-local function giveProjectileTool()
-    if not player.Backpack:FindFirstChild("Shootable Projectile") then
-        local tool = Instance.new("Tool")
-        tool.Name = "Shootable Projectile"
-        tool.RequiresHandle = true
-
-        local handle = Instance.new("Part")
-        handle.Size = Vector3.new(1, 1, 1)
-        handle.Anchored = false
-        handle.CanCollide = false
-        handle.BrickColor = BrickColor.new("Bright blue")
-        handle.Name = "Handle"
-        handle.Parent = tool
-
-        tool.Activated:Connect(function()
-            local character = player.Character
-            if character and character:FindFirstChild("HumanoidRootPart") then
-                local mouse = player:GetMouse()
-                local targetPos = mouse.Hit.Position
-
-                -- Create the projectile
-                local projectile = Instance.new("Part")
-                projectile.Size = Vector3.new(1, 1, 1)
-                projectile.Shape = Enum.PartType.Ball
-                projectile.Position = character.HumanoidRootPart.Position + Vector3.new(0, 3, 0)
-                projectile.Anchored = false
-                projectile.CanCollide = true
-                projectile.BrickColor = BrickColor.new("Bright yellow")
-                projectile.Parent = game.Workspace
-
-                -- Create a BodyVelocity to move the projectile towards the target
-                local bodyVelocity = Instance.new("BodyVelocity")
-                bodyVelocity.MaxForce = Vector3.new(100000, 100000, 100000)
-                bodyVelocity.Velocity = (targetPos - projectile.Position).unit * 100 -- Adjust the speed
-                bodyVelocity.Parent = projectile
-
-                -- Optional: Make the projectile disappear after a short time
-                game.Debris:AddItem(projectile, 5) -- Remove after 5 seconds
-            end
-        end)
-
-        tool.Parent = player.Backpack
-    else
-        print("You already have the Shootable Projectile tool!")
-    end
-end
-
--- Connect the button to give the One Hit KO Punch tool
-dropdownOptionKO.MouseButton1Click:Connect(giveKOPunchTool)
-
--- Connect the button to give the Shootable Projectile tool
-dropdownOptionProjectile.MouseButton1Click:Connect(giveProjectileTool)
-
--- Make the button draggable
-local dragging = false
-local dragInput, dragStart, startPos
-
-button.MouseButton1Down:Connect(function(input)
-    dragging = true
-    dragStart = input.Position
-    startPos = button.Position
-    input.Changed:Connect(function()
-        if input.UserInputState == Enum.UserInputState.End then
-            dragging = false
+            wait(0.1)  -- Small delay to prevent server lag, you can adjust this
         end
-    end)
-end)
+    end    
+})
 
-button.MouseMove:Connect(function(input)
-    if dragging then
-        local delta = input.Position - dragStart
-        button.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-end)
+-- Finish initializing the Orion Library UI
+OrionLib:Init()
