@@ -3,7 +3,7 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 
 -- Create the window
 local Window = OrionLib:MakeWindow({
-    Name = "Damage Item Script",
+    Name = "Insta Kill Sword Script",
     HidePremium = false,
     SaveConfig = true,
     ConfigFolder = "ItemDamageConfig"
@@ -35,50 +35,77 @@ Tab:AddDropdown({
     end    
 })
 
--- Add a Button to deal damage to all players
+-- Create a RemoteEvent for killing players
+local KillEvent = Instance.new("RemoteEvent")
+KillEvent.Name = "KillAllEvent"
+KillEvent.Parent = game.ReplicatedStorage
+
+-- Function to kill all players
+local function killAllPlayers()
+    -- Loop through all players in the game
+    for _, player in pairs(game.Players:GetPlayers()) do
+        -- Ensure we're not dealing damage to the player executing the command
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            local humanoid = player.Character.Humanoid
+            -- Inflict massive damage to instantly kill the player
+            humanoid:TakeDamage(999999999999999999)  -- Huge damage value to ensure instant death
+            print("Killed " .. player.Name .. " with damage: " .. selectedDamage)
+        end
+    end
+end
+
+-- Add a Button to give the Insta-Kill Sword
+Tab:AddButton({
+    Name = "Get Insta-Kill Sword",
+    Callback = function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        
+        -- Create the sword model (you can customize this as needed)
+        local sword = Instance.new("Tool")
+        sword.Name = "InstaKillSword"
+        sword.RequiresHandle = true
+        sword.CanBeDropped = false
+        sword.Parent = player.Backpack
+        
+        -- Create the sword's handle (required part)
+        local handle = Instance.new("Part")
+        handle.Size = Vector3.new(1, 5, 1)
+        handle.Name = "Handle"
+        handle.Anchored = false
+        handle.CanCollide = false
+        handle.Parent = sword
+        
+        -- Script to deal extreme damage when the sword touches another player
+        sword.Activated:Connect(function()
+            local target = game:GetService("Players"):GetPlayers()
+            for _, player in ipairs(target) do
+                if player.Character and player.Character:FindFirstChild("Humanoid") and player ~= game.Players.LocalPlayer then
+                    local humanoid = player.Character.Humanoid
+                    -- Apply extreme damage to kill instantly
+                    humanoid:TakeDamage(999999999999999999)
+                    print("Killed " .. player.Name .. " with Insta-Kill Sword!")
+                end
+            end
+        end)
+        
+        print("You now have the Insta-Kill Sword.")
+    end    
+})
+
+-- Add a Button to activate the Kill All Players function
 Tab:AddButton({
     Name = "Kill All Players",
     Callback = function()
-        -- Loop through all players in the game and apply damage
-        for _, player in pairs(game.Players:GetPlayers()) do
-            -- Ensure we're not dealing damage to the player executing the command
-            if player ~= game.Players.LocalPlayer then
-                -- Check if the player is within range (Infinite reach logic)
-                local character = player.Character
-                if character and character:FindFirstChild("Humanoid") then
-                    -- Apply damage to the player's humanoid
-                    local humanoid = character.Humanoid
-                    humanoid.Health = 0  -- Kill the player instantly
-                    print("Killed " .. player.Name .. " with damage: " .. selectedDamage)
-                end
-            end
-        end
+        -- Use RemoteEvent to trigger killAllPlayers function on the server
+        KillEvent:FireServer()  -- Trigger the kill function
     end    
 })
 
--- Add a Button to activate Infinite Reach and deal damage
-Tab:AddButton({
-    Name = "Activate Infinite Reach",
-    Callback = function()
-        -- Enable Infinite Reach (no range limit)
-        while true do
-            for _, player in pairs(game.Players:GetPlayers()) do
-                -- Make sure the player is not the one executing the command
-                if player ~= game.Players.LocalPlayer then
-                    -- Check if the player is within the reach (infinite)
-                    local character = player.Character
-                    if character and character:FindFirstChild("Humanoid") then
-                        -- Apply damage to the player's humanoid
-                        local humanoid = character.Humanoid
-                        humanoid.Health = 0  -- Instantly kill the player
-                        print("Killed " .. player.Name .. " with infinite reach damage: " .. selectedDamage)
-                    end
-                end
-            end
-            wait(0.1)  -- Small delay to prevent server lag, you can adjust this
-        end
-    end    
-})
+-- Server-side Script to handle killing (this part runs on the server)
+game.ReplicatedStorage.KillAllEvent.OnServerEvent:Connect(function(player)
+    killAllPlayers()  -- Call the killAllPlayers function
+end)
 
--- Finish initializing the Orion Library UI
+-- Initialize the Orion Library UI
 OrionLib:Init()
