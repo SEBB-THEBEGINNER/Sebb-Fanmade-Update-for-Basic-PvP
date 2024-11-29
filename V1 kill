@@ -1,100 +1,78 @@
--- Create GUI
-local player = game.Players.LocalPlayer
-local screenGui = Instance.new("ScreenGui")
-screenGui.Parent = player:WaitForChild("PlayerGui")
+-- Load the Orion Library
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 300, 0, 200)
-frame.Position = UDim2.new(0.5, -150, 0.5, -100)
-frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-frame.Parent = screenGui
-
--- Button to get the item
-local getItemButton = Instance.new("TextButton")
-getItemButton.Size = UDim2.new(0, 200, 0, 50)
-getItemButton.Position = UDim2.new(0.5, -100, 0.3, -25)
-getItemButton.Text = "Get Item"
-getItemButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-getItemButton.Parent = frame
-
--- Dropdown for selecting the damage amount
-local damageDropdown = Instance.new("TextButton")
-damageDropdown.Size = UDim2.new(0, 200, 0, 50)
-damageDropdown.Position = UDim2.new(0.5, -100, 0.6, -25)
-damageDropdown.Text = "Select Damage"
-damageDropdown.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
-damageDropdown.Parent = frame
-
--- Add a dropdown menu with damage options
-local Tab = {} -- Placeholder for Tab function to add the dropdown (assuming some Tab system is already in place)
-Tab.AddDropdown = function(options)
-    local dropdownButton = Instance.new("TextButton")
-    dropdownButton.Size = UDim2.new(0, 200, 0, 50)
-    dropdownButton.Position = UDim2.new(0.5, -100, 0.7, -25)
-    dropdownButton.Text = options.Name
-    dropdownButton.BackgroundColor3 = Color3.fromRGB(0, 0, 255)
-    dropdownButton.Parent = frame
-
-    -- Display options when clicked
-    dropdownButton.MouseButton1Click:Connect(function()
-        -- Cycle through options and call callback with selected value
-        local index = table.find(options.Options, options.Default)
-        index = index == #options.Options and 1 or index + 1
-        options.Callback(options.Options[index])
-        dropdownButton.Text = options.Options[index]
-    end)
-end
-
-Tab.AddDropdown({
-    Name = "Damage Selection",
-    Default = "1", -- Default damage option
-    Options = {"1", "2", "999999999999999999"}, -- Options include an insane damage value
-    Callback = function(Value)
-        print("Selected Damage: " .. Value)
-    end
+-- Create the window
+local Window = OrionLib:MakeWindow({
+    Name = "Damage Item Script",
+    HidePremium = false,
+    SaveConfig = true,
+    ConfigFolder = "ItemDamageConfig"
 })
 
--- Handle item acquisition when button is clicked
-getItemButton.MouseButton1Click:Connect(function()
-    local tool = Instance.new("Tool")
-    tool.Name = "Instakill Sword"
-    tool.RequiresHandle = true
-    tool.Parent = player.Backpack
+-- Create the Tab
+local Tab = Window:MakeTab({
+    Name = "Item Options",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
 
-    -- Add the item functionality to deal damage
-    local handle = Instance.new("Part")
-    handle.Name = "Handle"
-    handle.Size = Vector3.new(1, 5, 1)
-    handle.Color = Color3.fromRGB(255, 0, 0)
-    handle.Anchored = false
-    handle.Parent = tool
+-- Create a Section in the Tab
+local Section = Tab:AddSection({
+    Name = "Item Section"
+})
 
-    tool.Activated:Connect(function()
-        -- Check if the player has selected a damage value
-        local damageValue = "999999999999999999" -- Default damage for instakill
+-- Variable to store the selected damage value
+local selectedDamage = "999999999999999999"  -- Default damage is the highest value
 
-        -- Here you can get the selected damage value from the dropdown
-        -- For simplicity, I'll use the default value
-        if damageDropdown.Text == "999999999999999999" then
-            damageValue = "999999999999999999"  -- Assign the insane damage from the dropdown
-        elseif damageDropdown.Text == "2" then
-            damageValue = "2"  -- Use lower damage if "2" is selected
-        end
+-- Add a Dropdown for selecting the damage value
+Tab:AddDropdown({
+    Name = "Select Damage",
+    Default = "999999999999999999",
+    Options = {"1", "2", "999999999999999999"},
+    Callback = function(Value)
+        selectedDamage = Value
+        print("Selected Damage: " .. selectedDamage)
+    end    
+})
 
-        -- Raycast to detect an opponent
-        local rayOrigin = handle.Position
-        local rayDirection = (player.Character.HumanoidRootPart.Position + player.Character.HumanoidRootPart.CFrame.LookVector * 5) - rayOrigin
-        local raycastResult = workspace:Raycast(rayOrigin, rayDirection)
+-- Add a Button to give the player the item
+Tab:AddButton({
+    Name = "Get Damage Sword",
+    Callback = function()
+        -- Create the tool (sword)
+        local tool = Instance.new("Tool")
+        tool.Name = "Instakill Sword"
+        tool.RequiresHandle = true
+        tool.Parent = game.Players.LocalPlayer.Backpack
 
-        if raycastResult then
-            local hit = raycastResult.Instance
-            -- If we hit an opponent, apply the damage
-            if hit.Parent:FindFirstChild("Humanoid") then
-                local opponentHumanoid = hit.Parent.Humanoid
-                -- Apply damage and kill instantly
-                opponentHumanoid.Health = 0
-                print("Opponent killed with " .. damageValue .. " damage")
+        -- Create the handle for the sword
+        local handle = Instance.new("Part")
+        handle.Name = "Handle"
+        handle.Size = Vector3.new(1, 5, 1)
+        handle.Color = Color3.fromRGB(255, 0, 0)
+        handle.Anchored = false
+        handle.Parent = tool
+
+        -- Activate the tool to apply damage
+        tool.Activated:Connect(function()
+            -- Raycast to detect the target
+            local rayOrigin = handle.Position
+            local rayDirection = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position + game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.LookVector * 5) - rayOrigin
+            local raycastResult = workspace:Raycast(rayOrigin, rayDirection)
+
+            if raycastResult then
+                local hit = raycastResult.Instance
+                -- Check if the hit object is a humanoid (opponent)
+                if hit.Parent:FindFirstChild("Humanoid") then
+                    local opponentHumanoid = hit.Parent.Humanoid
+                    -- Apply selected damage and kill instantly
+                    opponentHumanoid.Health = 0
+                    print("Opponent killed with " .. selectedDamage .. " damage!")
+                end
             end
-        end
-    end)
-end)
+        end)
+    end    
+})
+
+-- Initialize the UI
+OrionLib:Init()
