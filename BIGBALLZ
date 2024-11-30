@@ -1,0 +1,485 @@
+--- You shouldn't be here, if you are looking for script just copy this all ---
+
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local TextLabel = Instance.new("TextLabel")
+local CreditsFrame = Instance.new("Frame")
+local Credits = Instance.new("TextLabel")
+local Made = Instance.new("TextLabel")
+local Sub = Instance.new("TextLabel")
+local Youtube = Instance.new("TextLabel")
+local CreditsButton = Instance.new("ImageButton")
+local HomeButton = Instance.new("ImageButton")
+local HomeFrame = Instance.new("Frame")
+local FlyButton = Instance.new("TextButton")
+local hitboxButton = Instance.new("TextButton")
+local SpeedButton = Instance.new("TextButton")
+local bighitboxButton = Instance.new("TextButton")
+local InfJumpButton = Instance.new("TextButton")
+local IyButton = Instance.new("TextButton")
+local EspButton = Instance.new("TextButton")
+local PingButton = Instance.new("TextButton")
+local FpsButton = Instance.new("TextButton")
+local CloseButton = Instance.new("TextButton")
+local UICorner = Instance.new("UICorner")
+local ImageButton = Instance.new("ImageButton")
+
+--Properties:
+
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Frame.BorderColor3 = Color3.fromRGB(255, 0, 0)
+Frame.BorderSizePixel = 3
+Frame.Position = UDim2.new(0.199667081, 0, 0.167724043, 0)
+Frame.Size = UDim2.new(0, 400, 0, 247)
+Frame.Visible = false
+
+local dragging
+local dragInput
+local dragStart
+local startPos
+
+local function clampFramePosition()
+    local screenSize = ScreenGui.AbsoluteSize
+    local frameSize = Frame.AbsoluteSize
+    local framePosition = Frame.Position
+
+    local minX = 0
+    local minY = 0
+    local maxX = screenSize.X - frameSize.X
+    local maxY = screenSize.Y - frameSize.Y
+
+    local clampedX = math.clamp(framePosition.X.Offset, minX, maxX)
+    local clampedY = math.clamp(framePosition.Y.Offset, minY, maxY)
+
+    Frame.Position = UDim2.new(framePosition.X.Scale, clampedX, framePosition.Y.Scale, clampedY)
+end
+
+local function updateInput(input)
+    local delta = input.Position - dragStart
+    Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    clampFramePosition()
+end
+
+Frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = Frame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+Frame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if dragging and input == dragInput then
+        updateInput(input)
+    end
+end)
+
+Frame:GetPropertyChangedSignal("Position"):Connect(clampFramePosition)
+
+TextLabel.Parent = Frame
+TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.BackgroundTransparency = 1.000
+TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.BorderSizePixel = 0
+TextLabel.Position = UDim2.new(0.207499996, 0, 0, 0)
+TextLabel.Size = UDim2.new(0, 234, 0, 58)
+TextLabel.Font = Enum.Font.LuckiestGuy
+TextLabel.Text = "Sebb's Commands"
+TextLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+TextLabel.TextSize = 24.000
+TextLabel.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
+
+CreditsFrame.Name = "CreditsFrame"
+CreditsFrame.Parent = Frame
+CreditsFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+CreditsFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+CreditsFrame.BorderSizePixel = 0
+CreditsFrame.Position = UDim2.new(0.0949999988, 0, 0.182186171, 0)
+CreditsFrame.Size = UDim2.new(0, 362, 0, 201)
+CreditsFrame.Visible = false
+
+Credits.Name = "Credits"
+Credits.Parent = CreditsFrame
+Credits.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+Credits.BackgroundTransparency = 1.000
+Credits.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Credits.BorderSizePixel = 0
+Credits.Position = UDim2.new(0.171270713, 0, -0.0597014911, 0)
+Credits.Size = UDim2.new(0, 200, 0, 50)
+Credits.Font = Enum.Font.LuckiestGuy
+Credits.Text = "Credits"
+Credits.TextColor3 = Color3.fromRGB(255, 0, 0)
+Credits.TextSize = 24.000
+
+Made.Name = "Made"
+Made.Parent = CreditsFrame
+Made.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+Made.BackgroundTransparency = 1.000
+Made.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Made.BorderSizePixel = 0
+Made.Position = UDim2.new(0.218232051, 0, 0.149253726, 0)
+Made.Size = UDim2.new(0, 200, 0, 50)
+Made.Font = Enum.Font.LuckiestGuy
+Made.Text = "Made by just sebb"
+Made.TextColor3 = Color3.fromRGB(255, 0, 0)
+Made.TextSize = 24.000
+
+Sub.Name = "Sub"
+Sub.Parent = CreditsFrame
+Sub.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+Sub.BackgroundTransparency = 1.000
+Sub.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Sub.BorderSizePixel = 0
+Sub.Position = UDim2.new(0.223756909, 0, 0.363184094, 0)
+Sub.Size = UDim2.new(0, 200, 0, 55)
+Sub.Font = Enum.Font.LuckiestGuy
+Sub.Text = "Support just sebb"
+Sub.TextColor3 = Color3.fromRGB(255, 0, 0)
+Sub.TextSize = 24.000
+
+Youtube.Name = "Youtube"
+Youtube.Parent = CreditsFrame
+Youtube.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+Youtube.BackgroundTransparency = 1.000
+Youtube.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Youtube.BorderSizePixel = 0
+Youtube.Position = UDim2.new(0.218232051, 0, 0.482587069, 0)
+Youtube.Size = UDim2.new(0, 200, 0, 55)
+Youtube.Font = Enum.Font.LuckiestGuy
+Youtube.Text = "On YouTube"
+Youtube.TextColor3 = Color3.fromRGB(255, 0, 0)
+Youtube.TextSize = 24.000
+
+CreditsButton.Name = "CreditsButton"
+CreditsButton.Parent = Frame
+CreditsButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+CreditsButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+CreditsButton.BorderSizePixel = 0
+CreditsButton.Position = UDim2.new(0, 0, 0.421052635, 0)
+CreditsButton.Size = UDim2.new(0, 38, 0, 38)
+CreditsButton.Image = "rbxassetid://124117930229179"
+
+HomeButton.Name = "HomeButton"
+HomeButton.Parent = Frame
+HomeButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+HomeButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+HomeButton.BorderSizePixel = 0
+HomeButton.Position = UDim2.new(0, 0, 0.182999998, 0)
+HomeButton.Size = UDim2.new(0, 38, 0, 38)
+HomeButton.Image = "rbxassetid://124117930229179"
+
+HomeFrame.Name = "HomeFrame"
+HomeFrame.Parent = Frame
+HomeFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+HomeFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+HomeFrame.BorderSizePixel = 0
+HomeFrame.Position = UDim2.new(0.0949999988, 0, 0.182186171, 0)
+HomeFrame.Size = UDim2.new(0, 362, 0, 201)
+
+FlyButton.Name = "FlyButton"
+FlyButton.Parent = HomeFrame
+FlyButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+FlyButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+FlyButton.BorderSizePixel = 0
+FlyButton.Size = UDim2.new(0, 52, 0, 38)
+FlyButton.Font = Enum.Font.Highway
+FlyButton.Text = "Fly"
+FlyButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+FlyButton.TextSize = 24.000
+FlyButton.MouseButton1Down:connect(function()
+loadstring(game:HttpGet('https://pastebin.com/raw/YSL3xKYU'))()
+end)
+
+hitboxButton.Name = "hitboxButton"
+hitboxButton.Parent = HomeFrame
+hitboxButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+hitboxButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+hitboxButton.BorderSizePixel = 0
+hitboxButton.Position = UDim2.new(0.166999996, 0, 0, 0)
+hitboxButton.Size = UDim2.new(0, 52, 0, 38)
+hitboxButton.Font = Enum.Font.Highway
+hitboxButton.Text = "Hitbox"
+hitboxButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+hitboxButton.TextSize = 18.000
+hitboxButton.MouseButton1Down:connect(function()
+_G.HeadSize = 25
+_G.Disabled = true
+
+game:GetService('RunService').RenderStepped:connect(function()
+if _G.Disabled then
+for i,v in next, game:GetService('Players'):GetPlayers() do
+if v.Name ~= game:GetService('Players').LocalPlayer.Name then
+pcall(function()
+v.Character.HumanoidRootPart.Size = Vector3.new(_G.HeadSize,_G.HeadSize,_G.HeadSize)
+v.Character.HumanoidRootPart.Transparency = 0.7
+v.Character.HumanoidRootPart.BrickColor = BrickColor.new("Really black")
+v.Character.HumanoidRootPart.Material = "Neon"
+v.Character.HumanoidRootPart.CanCollide = false
+end)
+end
+end
+end
+end)
+end)
+
+
+SpeedButton.Name = "SpeedButton"
+SpeedButton.Parent = HomeFrame
+SpeedButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+SpeedButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+SpeedButton.BorderSizePixel = 0
+SpeedButton.Position = UDim2.new(0.684000015, 0, 0, 0)
+SpeedButton.Size = UDim2.new(0, 52, 0, 38)
+SpeedButton.Font = Enum.Font.Highway
+SpeedButton.Text = "Speed"
+SpeedButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+SpeedButton.TextSize = 16.000
+SpeedButton.MouseButton1Down:connect(function()
+function isNumber(str)
+  if tonumber(str) ~= nil or str == 'inf' then
+    return true
+  end
+end
+local tspeed = 1
+local hb = game:GetService("RunService").Heartbeat
+local tpwalking = true
+local player = game:GetService("Players")
+local lplr = player.LocalPlayer
+local chr = lplr.Character
+local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
+while tpwalking and hb:Wait() and chr and hum and hum.Parent do
+  if hum.MoveDirection.Magnitude > 0 then
+    if tspeed and isNumber(tspeed) then
+      chr:TranslateBy(hum.MoveDirection * tonumber(tspeed))
+    else
+      chr:TranslateBy(hum.MoveDirection)
+    end
+  end
+end
+end)
+
+
+bighitboxButton.Name = "bighitboxButton"
+bighitboxButton.Parent = HomeFrame
+bighitboxButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+bighitboxButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+bighitboxButton.BorderSizePixel = 0
+bighitboxButton.Position = UDim2.new(0.342000008, 0, 0, 0)
+bighitboxButton.Size = UDim2.new(0, 52, 0, 38)
+bighitboxButton.Font = Enum.Font.Highway
+bighitboxButton.Text = "Big Hitbox"
+bighitboxButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+bighitboxButton.TextSize = 12.000
+bighitboxButton.MouseButton1Down:connect(function()
+loadstring(game:HttpGet("https://freenote.biz/raw/7ppgluanqp",true))()
+end)
+
+InfJumpButton.Name = "InfJumpButton"
+InfJumpButton.Parent = HomeFrame
+InfJumpButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+InfJumpButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+InfJumpButton.BorderSizePixel = 0
+InfJumpButton.Position = UDim2.new(0.514999986, 0, 0, 0)
+InfJumpButton.Size = UDim2.new(0, 52, 0, 38)
+InfJumpButton.Font = Enum.Font.Highway
+InfJumpButton.Text = "Inf Jumps"
+InfJumpButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+InfJumpButton.TextSize = 13.000
+InfJumpButton.MouseButton1Down:connect(function()
+local InfiniteJumpEnabled = true
+game:GetService("UserInputService").JumpRequest:connect(function()
+	if InfiniteJumpEnabled then
+		game:GetService"Players".LocalPlayer.Character:FindFirstChildOfClass'Humanoid':ChangeState("Jumping")
+	end
+end)
+end)
+
+IyButton.Name = "IyButton"
+IyButton.Parent = HomeFrame
+IyButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+IyButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+IyButton.BorderSizePixel = 0
+IyButton.Position = UDim2.new(0.850000024, 0, 0, 0)
+IyButton.Size = UDim2.new(0, 52, 0, 38)
+IyButton.Font = Enum.Font.Highway
+IyButton.Text = "Inf Yeild"
+IyButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+IyButton.TextSize = 14.000
+IyButton.MouseButton1Down:connect(function()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+end)
+
+EspButton.Name = "EspButton"
+EspButton.Parent = HomeFrame
+EspButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+EspButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+EspButton.BorderSizePixel = 0
+EspButton.Position = UDim2.new(0, 0, 0.293532342, 0)
+EspButton.Size = UDim2.new(0, 52, 0, 38)
+EspButton.Font = Enum.Font.Highway
+EspButton.Text = "Esp"
+EspButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+EspButton.TextSize = 24.000
+EspButton.MouseButton1Down:connect(function()
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local function createBox()
+    local box = Instance.new("BoxHandleAdornment")
+    box.Size = Vector3.new(5, 5, 2)
+    box.Color3 = Color3.new(1,0,0)
+    box.Transparency = 0.1
+    box.ZIndex = 5
+    return box
+end
+
+local function updateEsp(player, box)
+    local character = player.Character
+    if character and character:FindFirstChild("HumanoidRootPart") then
+        box.Visible = true
+        box.Adornee = character.HumanoidRootPart
+        box.Parent = character.HumanoidRootPart
+    else
+        box.Visible = false
+        box.Adornee = nil
+        box.Parent = nil
+    end
+end
+
+local function onPlayerAdded(player)
+    local box = createBox()
+    updateEsp(player, box)
+    player.CharacterAdded:Connect(function()
+        updateEsp(player, box)
+    end)
+    player.CharacterRemoving:Connect(function()
+        updateEsp(player, box)
+    end)
+end
+
+for _, player in ipairs(Players:GetPlayers()) do
+    onPlayerAdded(player)
+end
+
+Players.PlayerAdded:Connect(function(player)
+    onPlayerAdded(player)
+end)
+
+RunService.RenderStepped:Connect(function()
+    for _, player in ipairs(Players:GetPlayers()) do
+        updateEsp(player)
+    end
+end)
+end)
+
+PingButton.Name = "PingButton"
+PingButton.Parent = HomeFrame
+PingButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+PingButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+PingButton.BorderSizePixel = 0
+PingButton.Position = UDim2.new(0.168508291, 0, 0.293532342, 0)
+PingButton.Size = UDim2.new(0, 52, 0, 38)
+PingButton.Font = Enum.Font.Highway
+PingButton.Text = "Ping"
+PingButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+PingButton.TextSize = 22.000
+PingButton.MouseButton1Down:connect(function()
+loadstring(game:HttpGet("https://pastebin.com/raw/MvKKJ331",true))()
+end)
+
+FpsButton.Name = "FpsButton"
+FpsButton.Parent = HomeFrame
+FpsButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+FpsButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+FpsButton.BorderSizePixel = 0
+FpsButton.Position = UDim2.new(0.342000008, 0, 0.294, 0)
+FpsButton.Size = UDim2.new(0, 52, 0, 38)
+FpsButton.Font = Enum.Font.Highway
+FpsButton.Text = "Fps"
+FpsButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+FpsButton.TextSize = 24.000
+FpsButton.MouseButton1Down:connect(function()
+loadstring(game:HttpGet("https://pastebin.com/raw/ySHJdZpb",true))()
+end)
+
+CloseButton.Name = "CloseButton"
+CloseButton.Parent = Frame
+CloseButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+CloseButton.BorderSizePixel = 0
+CloseButton.Position = UDim2.new(0.962499976, 0, -0.0485830568, 0)
+CloseButton.Size = UDim2.new(0, 25, 0, 24)
+CloseButton.Font = Enum.Font.SourceSansBold
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 0, 0)
+CloseButton.TextSize = 34.000
+
+UICorner.Parent = CloseButton
+
+ImageButton.Parent = ScreenGui
+ImageButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ImageButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+ImageButton.BorderSizePixel = 0
+ImageButton.Position = UDim2.new(0, 0, 0.0695410296, 0)
+ImageButton.Size = UDim2.new(0, 46, 0, 45)
+ImageButton.Image = "rbxassetid://124117930229179"
+ImageButton.Active = true
+ImageButton.Selectable = true
+ImageButton.Draggable = true
+
+
+-- Scripts:
+
+
+	CreditsButton.MouseButton1Click:connect(function()
+		HomeFrame.Visible = false
+		CreditsFrame.Visible = true
+		wait(0.1)
+	end)
+	
+	
+
+	HomeButton.MouseButton1Click:connect(function()
+		HomeFrame.Visible = true
+		CreditsFrame.Visible = false
+		wait(0.1)
+	end)
+	
+	
+	
+	CloseButton.MouseButton1Click:Connect(function()
+		ScreenGui.Frame.Visible = false
+		ImageButton.Visible = true
+	end)
+
+
+	
+	ImageButton.MouseButton1Click:Connect(function()
+		ScreenGui.Frame.Visible = true
+		ImageButton.Visible = false
+	end)
+
+
+
+game.StarterGui:SetCore("SendNotification",  {
+ Title = "Sebb's Commands";
+ Text = "Made by SEBB RBLX. Subscribe him on youtube";
+ Icon = "rbxassetid://124117930229179";
+ Duration = 30;
+})
