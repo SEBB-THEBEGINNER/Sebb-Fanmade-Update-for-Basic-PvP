@@ -84,7 +84,7 @@ ToolsTab:AddButton({
     Name = "Trolling",
     Callback = function()
         loadstring(game:HttpGet('https://raw.githubusercontent.com/kigredns/SanderXV4.2.2/refs/heads/main/New.lua'))() 
-    end -- Fix: Properly close the function here
+    end
 })
 
 ToolsTab:AddButton({
