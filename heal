@@ -1,0 +1,13 @@
+-- Place this script in the TextButton
+local button = script.Parent
+local player = game.Players.LocalPlayer
+
+button.Text = "Heal to 100" -- Button text
+
+button.MouseButton1Click:Connect(function()
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:FindFirstChild("Humanoid")
+    if humanoid then
+        humanoid.Health = humanoid.MaxHealth -- Restore health to maximum
+    end
+end)
