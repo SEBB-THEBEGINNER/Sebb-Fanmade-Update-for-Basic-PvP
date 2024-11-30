@@ -69,7 +69,7 @@ ToolsTab:AddButton({
 ToolsTab:AddButton({
     Name = "Invisible V2",
     Callback = function()
-        loadstring(game:HttpGet('https://abre.ai/invisible-v2'))();
+        loadstring(game:HttpGet('https://abre.ai/invisible-v2'))()
     end
 })
 
@@ -84,7 +84,8 @@ ToolsTab:AddButton({
     Name = "Trolling",
     Callback = function()
         loadstring(game:HttpGet('https://raw.githubusercontent.com/kigredns/SanderXV4.2.2/refs/heads/main/New.lua'))() 
-end
+    end -- Fix: Properly close the function here
+})
 
 ToolsTab:AddButton({
     Name = "Aimbot V2",
@@ -116,9 +117,9 @@ InfoTab:AddButton({
 })
 
 InfoTab:AddButton({
-    Name = "Current version: 1.0",
+    Name = "Current version: 1.1",
     Callback = function()
-        print("Version: 1.0")
+        print("Version: 1.1")
     end
 })
 
