@@ -1,45 +1,93 @@
-local TextBox = script.Parent.Parent:FindFirstChild("UsernameInput") -- Reference the TextBox
-local Button = script.Parent -- Reference the button
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
-local Players = game:GetService("Players")
-local InsertService = game:GetService("InsertService")
+local Window = OrionLib:MakeWindow({
+    Name = "Avatar Spawner",
+    HidePremium = false,
+    SaveConfig = true,
+    ConfigFolder = "AvatarSpawner"
+})
 
-Button.MouseButton1Click:Connect(function()
-    local username = TextBox.Text
-    if username ~= "" then
-        -- Attempt to fetch the player's UserId
-        local success, userId = pcall(function()
-            return Players:GetUserIdFromNameAsync(username)
-        end)
+local Tab = Window:MakeTab({
+    Name = "Spawn Dummy",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
 
-        if success and userId then
-            -- Fetch the player's avatar and create a dummy
-            local success2, avatarModel = pcall(function()
-                return Players:GetCharacterAppearanceAsync(userId)
+Tab:AddTextbox({
+    Name = "Enter Username",
+    Default = "",
+    TextDisappear = true,
+    Callback = function(Value)
+        _G.UsernameToSpawn = Value -- Store the username globally for the button callback
+    end
+})
+
+Tab:AddButton({
+    Name = "Spawn Dummy",
+    Callback = function()
+        local Players = game:GetService("Players")
+        local InsertService = game:GetService("InsertService")
+        local workspace = game:GetService("Workspace")
+
+        if _G.UsernameToSpawn and _G.UsernameToSpawn ~= "" then
+            -- Attempt to fetch the player's UserId
+            local success, userId = pcall(function()
+                return Players:GetUserIdFromNameAsync(_G.UsernameToSpawn)
             end)
 
-            if success2 and avatarModel then
-                local dummy = Instance.new("Model") -- Create a new dummy model
-                dummy.Name = username .. "_Dummy"
+            if success and userId then
+                -- Fetch the player's avatar and create a dummy
+                local success2, avatarModel = pcall(function()
+                    return Players:GetCharacterAppearanceAsync(userId)
+                end)
 
-                for _, child in pairs(avatarModel:GetChildren()) do
-                    child.Parent = dummy
+                if success2 and avatarModel then
+                    local dummy = Instance.new("Model") -- Create a new dummy model
+                    dummy.Name = _G.UsernameToSpawn .. "_Dummy"
+
+                    for _, child in pairs(avatarModel:GetChildren()) do
+                        child.Parent = dummy
+                    end
+
+                    -- Add a Humanoid to the dummy
+                    local humanoid = Instance.new("Humanoid")
+                    humanoid.Parent = dummy
+
+                    -- Set up the dummy in the workspace
+                    dummy.Parent = workspace
+                    dummy:SetPrimaryPartCFrame(workspace.CurrentCamera.CFrame * CFrame.new(0, 5, -10)) -- Adjust spawn position
+
+                    OrionLib:MakeNotification({
+                        Name = "Success!",
+                        Content = "Spawned dummy for " .. _G.UsernameToSpawn,
+                        Image = "rbxassetid://4483345998",
+                        Time = 5
+                    })
+                else
+                    OrionLib:MakeNotification({
+                        Name = "Error!",
+                        Content = "Failed to load avatar for username.",
+                        Image = "rbxassetid://4483345998",
+                        Time = 5
+                    })
                 end
-
-                -- Add a Humanoid to the dummy
-                local humanoid = Instance.new("Humanoid")
-                humanoid.Parent = dummy
-
-                -- Set up the dummy in the workspace
-                dummy.Parent = workspace
-                dummy:SetPrimaryPartCFrame(workspace.CurrentCamera.CFrame * CFrame.new(0, 5, -10)) -- Adjust spawn position
             else
-                warn("Failed to load avatar for username.")
+                OrionLib:MakeNotification({
+                    Name = "Error!",
+                    Content = "Invalid username or user does not exist.",
+                    Image = "rbxassetid://4483345998",
+                    Time = 5
+                })
             end
         else
-            warn("Invalid username or user does not exist.")
+            OrionLib:MakeNotification({
+                Name = "Error!",
+                Content = "Please enter a username.",
+                Image = "rbxassetid://4483345998",
+                Time = 5
+            })
         end
-    else
-        warn("Please enter a username.")
     end
-end)
+})
+
+OrionLib:Init()
