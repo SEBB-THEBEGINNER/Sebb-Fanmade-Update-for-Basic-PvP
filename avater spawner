@@ -15,19 +15,21 @@ local Tab = Window:MakeTab({
 
 local Players = game:GetService("Players")
 
+local enteredUsername = "" -- Variable to hold the entered username
+
 Tab:AddTextbox({
     Name = "Enter Username",
     Default = "",
-    TextDisappear = true,
+    TextDisappear = false, -- Keeps the text in the textbox
     Callback = function(Value)
-        _G.UsernameToSpawn = Value -- Store the username for use
+        enteredUsername = Value -- Store the username for use
     end
 })
 
 Tab:AddButton({
     Name = "Spawn Dummy",
     Callback = function()
-        if not _G.UsernameToSpawn or _G.UsernameToSpawn == "" then
+        if enteredUsername == "" then
             OrionLib:MakeNotification({
                 Name = "Error!",
                 Content = "Please enter a valid username.",
@@ -38,7 +40,7 @@ Tab:AddButton({
         end
 
         local success, userId = pcall(function()
-            return Players:GetUserIdFromNameAsync(_G.UsernameToSpawn)
+            return Players:GetUserIdFromNameAsync(enteredUsername)
         end)
 
         if not success then
@@ -58,7 +60,7 @@ Tab:AddButton({
 
         if success2 and characterModel then
             local dummy = Instance.new("Model")
-            dummy.Name = _G.UsernameToSpawn .. "_Dummy"
+            dummy.Name = enteredUsername .. "_Dummy"
 
             -- Move all avatar parts into the dummy
             for _, part in ipairs(characterModel:GetChildren()) do
@@ -86,7 +88,7 @@ Tab:AddButton({
 
             OrionLib:MakeNotification({
                 Name = "Success!",
-                Content = "Spawned dummy for " .. _G.UsernameToSpawn,
+                Content = "Spawned dummy for " .. enteredUsername,
                 Image = "rbxassetid://4483345998",
                 Time = 5
             })
