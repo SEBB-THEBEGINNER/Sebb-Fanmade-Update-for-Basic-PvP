@@ -1,0 +1,122 @@
+-- Boot the Orion Library
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+-- Create the Window
+local Window = OrionLib:MakeWindow({Name = "BASIC SCRIPT'S", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+
+-- Script Data
+local Scripts = {
+    {Name = "Fly", Url = "https://raw.githubusercontent.com/XNEOFF/FlyGuiV3/main/FlyGuiV3.txt"},
+    {Name = "Big hitbox", Url = "https://scriptblox.com/raw/Universal-Script-Update-script-hitbox-9326"},
+    {Name = "Inf jumps", Callback = function()
+        local InfiniteJumpEnabled = true
+        game:GetService("UserInputService").JumpRequest:connect(function()
+            if InfiniteJumpEnabled then
+                game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+            end
+        end)
+    end},
+    {Name = "Inf yield", Url = "https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"},
+    {Name = "ESP", Url = "https://raw.githubusercontent.com/Lucasfin000/SpaceHub/main/UESP"},
+    {Name = "Fe Emotes", Url = "https://pastebin.com/raw/eCpipCTH"},
+    {Name = "Universal Remove Surface Textures and Effects", Url = "https://raw.githubusercontent.com/SEBB-THEBEGINNER/Sebb-Fanmade-Update-for-Basic-PvP/refs/heads/main/Universal%20Remove%20Surface%20Textures%20and%20Effects"},
+    {Name = "Invisible V2", Url = "https://abre.ai/invisible-v2"},
+    {Name = "1000+ GUI", Url = "https://raw.githubusercontent.com/SEBB-THEBEGINNER/Sebb-Fanmade-Update-for-Basic-PvP/refs/heads/main/testing"},
+    {Name = "Trolling", Url = "https://raw.githubusercontent.com/kigredns/SanderXV4.2.2/refs/heads/main/New.lua"},
+    {Name = "Aimbot V2", Url = "https://raw.githubusercontent.com/yzeedw/Mortalv2-main/main/UNIVERSAL%20AIMBOT%20V2"},
+    {Name = "Keyboard", Url = "https://raw.githubusercontent.com/advxzivhsjjdhxhsidifvsh/mobkeyboard/main/main.txt"}
+}
+
+-- Create the Tools Tab
+local ToolsTab = Window:MakeTab({
+    Name = "TOOLS",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- Search Box
+local SearchBox = ToolsTab:AddTextbox({
+    Name = "Search Scripts",
+    Default = "",
+    TextDisappear = true,
+    Callback = function(query)
+        UpdateScriptButtons(query:lower())
+    end
+})
+
+-- Table for Buttons
+local ScriptButtons = {}
+
+-- Function to Create Buttons
+local function CreateScriptButtons()
+    for _, script in pairs(Scripts) do
+        local button = ToolsTab:AddButton({
+            Name = script.Name,
+            Callback = function()
+                if script.Url then
+                    loadstring(game:HttpGet(script.Url))()
+                elseif script.Callback then
+                    script.Callback()
+                end
+            end
+        })
+        table.insert(ScriptButtons, {Button = button, Script = script})
+    end
+end
+
+-- Function to Update Script Buttons Based on Search Query
+local function UpdateScriptButtons(query)
+    for _, data in pairs(ScriptButtons) do
+        local button = data.Button
+        local script = data.Script
+        if query == "" or script.Name:lower():find(query) then
+            button:SetVisible(true) -- Show matching scripts
+        else
+            button:SetVisible(false) -- Hide non-matching scripts
+        end
+    end
+end
+
+-- Create the Script Buttons
+CreateScriptButtons()
+
+-- Create the Info Tab
+local InfoTab = Window:MakeTab({
+    Name = "INFO",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- Add Info Buttons
+InfoTab:AddButton({
+    Name = "Sebb - The Creator",
+    Callback = function()
+        print("Creator: Sebb")
+    end
+})
+
+InfoTab:AddButton({
+    Name = "Current version: 1.0",
+    Callback = function()
+        print("Version: 1.0")
+    end
+})
+
+InfoTab:AddButton({
+    Name = "YouTube: Sebb",
+    Callback = function()
+        local link = "https://youtube.com/@sebb-k9x?si=NuMivqb0pfgxOs4o"
+        if setclipboard then
+            setclipboard(link) -- For PC
+        else
+            game:GetService("StarterGui"):SetCore("SendNotification", {
+                Title = "Copied!";
+                Text = "The YouTube link has been copied to your clipboard.";
+                Duration = 5;
+            })
+        end
+    end
+})
+
+-- Initialize the Library
+OrionLib:Init()
