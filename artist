@@ -1,0 +1,50 @@
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+-- Creating the window
+local Window = OrionLib:MakeWindow({
+    Name = "Starving Artists Scripts",
+    HidePremium = false,
+    SaveConfig = true,
+    ConfigFolder = "OrionTest"
+})
+
+-- Creating a tab for the first script (Drawing Script)
+local DrawingTab = Window:MakeTab({
+    Name = "Drawing Script",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- Adding a button to run the Drawing Script
+DrawingTab:AddButton({
+    Name = "Run Drawing Script",
+    Callback = function()
+        loadstring(game:HttpGet("https://github.com/usernaxo/RobloxScripts/raw/main/StarvingArtists/DrawingScript.lua", true))()
+    end
+})
+
+-- Creating a tab for the second script (Starving Artist)
+local ArtistTab = Window:MakeTab({
+    Name = "Starving Artist",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+-- Adding a button to run the Starving Artist Script
+ArtistTab:AddButton({
+    Name = "Run Starving Artist Script",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/itsnoctural/Utilities/main/Closed/StarvingArtist.lua"))()
+    end
+})
+
+-- Notify user that the scripts are loaded
+OrionLib:MakeNotification({
+    Name = "Scripts Loaded!",
+    Content = "The Drawing and Starving Artist scripts are ready to use.",
+    Image = "rbxassetid://4483345998",
+    Time = 5
+})
+
+-- Finish the script with the OrionLib initialization
+OrionLib:Init()
