@@ -1,0 +1,32 @@
+local TextBox = script.Parent.Parent.TextBox -- Reference to the TextBox
+local Button = script.Parent -- Reference to the Button
+
+Button.MouseButton1Click:Connect(function()
+    local username = TextBox.Text
+    if username ~= "" then
+        -- Load player data
+        local Players = game:GetService("Players")
+        Players:GetUserIdFromNameAsync(username):andThen(function(userId)
+            -- Spawn the player's character
+            local charModel = Players:GetCharacterAppearanceAsync(userId)
+            if charModel then
+                local clonedChar = charModel:Clone()
+                clonedChar.Name = username .. "_Bot"
+                
+                -- Remove HumanoidRootPart's movement to avoid falling
+                local rootPart = clonedChar:FindFirstChild("HumanoidRootPart")
+                if rootPart then
+                    rootPart.Anchored = true
+                end
+                
+                -- Spawn character in the world
+                clonedChar.Parent = workspace
+                clonedChar:SetPrimaryPartCFrame(workspace.CurrentCamera.CFrame * CFrame.new(0, 5, -10)) -- Adjust position
+            end
+        end):catch(function(err)
+            warn("Error: " .. err)
+        end)
+    else
+        warn("Please enter a username.")
+    end
+end)
