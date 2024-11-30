@@ -14,6 +14,7 @@ local Tab = Window:MakeTab({
 })
 
 local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 
 local enteredUsername = "" -- Variable to hold the entered username
 
@@ -78,9 +79,10 @@ Tab:AddButton({
                 dummy.PrimaryPart = dummy:FindFirstChildWhichIsA("BasePart")
             end
 
-            -- Position the dummy in front of the camera
+            -- Position the dummy beside the player
             if dummy.PrimaryPart then
-                dummy:SetPrimaryPartCFrame(workspace.CurrentCamera.CFrame * CFrame.new(0, 5, -10))
+                local offset = CFrame.new(5, 0, 0) -- Adjust the offset to position the dummy beside the player
+                dummy:SetPrimaryPartCFrame(LocalPlayer.Character.HumanoidRootPart.CFrame * offset)
             end
 
             -- Parent the dummy to the workspace
