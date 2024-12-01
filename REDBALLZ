@@ -1,0 +1,58 @@
+-- Create GUI
+local ScreenGui = Instance.new("ScreenGui")
+local Button = Instance.new("TextButton")
+
+-- Set up ScreenGui
+ScreenGui.Name = "RedBallGUI"
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Set up Button
+Button.Name = "GiveBallButton"
+Button.Text = "Get Red Ball"
+Button.Size = UDim2.new(0, 200, 0, 50)
+Button.Position = UDim2.new(0.5, -100, 0.5, -25)
+Button.Parent = ScreenGui
+
+-- Function to give the player a red ball
+local function giveRedBall()
+    local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+    local backpack = game.Players.LocalPlayer:WaitForChild("Backpack")
+    
+    -- Check if the red ball already exists
+    if character:FindFirstChild("RedBall") or backpack:FindFirstChild("RedBall") then
+        return -- Prevent duplicates
+    end
+    
+    -- Create the red ball tool
+    local tool = Instance.new("Tool")
+    tool.Name = "RedBall"
+    tool.RequiresHandle = true
+    tool.CanBeDropped = false
+
+    -- Create the ball
+    local handle = Instance.new("Part")
+    handle.Name = "Handle"
+    handle.Size = Vector3.new(2, 2, 2)
+    handle.Shape = Enum.PartType.Ball
+    handle.BrickColor = BrickColor.new("Bright red")
+    handle.Material = Enum.Material.SmoothPlastic
+    handle.Parent = tool
+
+    -- Add the ball's functionality
+    handle.Touched:Connect(function(hit)
+        if hit and hit.Parent and hit.Parent:FindFirstChild("Humanoid") then
+            local humanoid = hit.Parent:FindFirstChild("Humanoid")
+            local bodyVelocity = Instance.new("BodyVelocity")
+            bodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+            bodyVelocity.Velocity = Vector3.new(0, 50, 0) + handle.CFrame.LookVector * 100
+            bodyVelocity.Parent = hit
+            game:GetService("Debris"):AddItem(bodyVelocity, 0.2) -- Clean up the velocity after 0.2 seconds
+        end
+    end)
+
+    -- Parent the tool to the player's backpack
+    tool.Parent = backpack
+end
+
+-- Connect the button to the giveRedBall function
+Button.MouseButton1Click:Connect(giveRedBall)
