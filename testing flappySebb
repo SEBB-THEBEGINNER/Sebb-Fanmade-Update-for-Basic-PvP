@@ -1,43 +1,67 @@
 -- Game Variables
 local player = game.Players.LocalPlayer
+local screen = player.PlayerGui:WaitForChild("ScreenGui")
 local mouse = player:GetMouse()
-local screen = game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("ScreenGui")
 
 -- Assets
-local background = Instance.new("ImageLabel")
-background.Image = "rbxassetid://135980554202860"
-background.Size = UDim2.new(1, 0, 1, 0)
-background.Parent = screen
+local background = "rbxassetid://135980554202860"
+local floor = "rbxassetid://129587718897885"
+local pipe = "rbxassetid://87512883198055"
+local downflap = "rbxassetid://127638108888162"
+local midflap = "rbxassetid://72207004690891"
+local upflap = "rbxassetid://133705047906282"
 
-local floor = Instance.new("ImageLabel")
-floor.Image = "rbxassetid://129587718897885"
-floor.Size = UDim2.new(1, 0, 0.1, 0)
-floor.Position = UDim2.new(0, 0, 0.9, 0)
-floor.Parent = screen
+-- Create a Menu GUI
+local menuFrame = Instance.new("Frame")
+menuFrame.Size = UDim2.new(1, 0, 1, 0)
+menuFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+menuFrame.BackgroundTransparency = 0.5
+menuFrame.Parent = screen
+
+local startButton = Instance.new("TextButton")
+startButton.Text = "Start Game"
+startButton.Size = UDim2.new(0, 200, 0, 50)
+startButton.Position = UDim2.new(0.5, -100, 0.5, -25)
+startButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+startButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+startButton.Parent = menuFrame
+
+-- Game Elements (Initially hidden)
+local gameFrame = Instance.new("Frame")
+gameFrame.Size = UDim2.new(1, 0, 1, 0)
+gameFrame.BackgroundTransparency = 1
+gameFrame.Parent = screen
+
+local backgroundImage = Instance.new("ImageLabel")
+backgroundImage.Image = background
+backgroundImage.Size = UDim2.new(1, 0, 1, 0)
+backgroundImage.Parent = gameFrame
+
+local floorImage = Instance.new("ImageLabel")
+floorImage.Image = floor
+floorImage.Size = UDim2.new(1, 0, 0.1, 0)
+floorImage.Position = UDim2.new(0, 0, 0.9, 0)
+floorImage.Parent = gameFrame
 
 local bird = Instance.new("ImageLabel")
-bird.Image = "rbxassetid://127638108888162"  -- Starting flap (downflap)
+bird.Image = downflap  -- Starting flap (downflap)
 bird.Size = UDim2.new(0, 50, 0, 50)
 bird.Position = UDim2.new(0.1, 0, 0.5, 0)
-bird.Parent = screen
-
-local flapSpeed = 0.2  -- Speed of flapping
-local gravity = 0.5    -- Gravity effect on the bird
-local velocity = 0     -- Bird's vertical velocity
+bird.Parent = gameFrame
 
 -- Pipe setup
 local function createPipe()
     local pipeUp = Instance.new("ImageLabel")
-    pipeUp.Image = "rbxassetid://87512883198055"
+    pipeUp.Image = pipe
     pipeUp.Size = UDim2.new(0, 60, 0, math.random(200, 300))  -- Random height for the top pipe
     pipeUp.Position = UDim2.new(1, 0, 0, 0)
-    pipeUp.Parent = screen
+    pipeUp.Parent = gameFrame
 
     local pipeDown = Instance.new("ImageLabel")
-    pipeDown.Image = "rbxassetid://87512883198055"
+    pipeDown.Image = pipe
     pipeDown.Size = UDim2.new(0, 60, 0, screen.AbsoluteSize.Y - pipeUp.Size.Y.Offset - 150)
     pipeDown.Position = UDim2.new(1, 0, 0, pipeUp.Size.Y.Offset + 150)
-    pipeDown.Parent = screen
+    pipeDown.Parent = gameFrame
 
     return pipeUp, pipeDown
 end
@@ -45,47 +69,60 @@ end
 -- Flapping Mechanism
 local function flap()
     if velocity <= 0 then
-        bird.Image = "rbxassetid://133705047906282"  -- Up flap image
+        bird.Image = upflap  -- Up flap image
     else
-        bird.Image = "rbxassetid://127638108888162"  -- Down flap image
+        bird.Image = downflap  -- Down flap image
     end
     velocity = -8  -- Set an initial velocity for the bird to move upwards
 end
 
--- Update Game Loop
-local function update()
-    velocity = velocity + gravity  -- Apply gravity to the bird
-    bird.Position = bird.Position + UDim2.new(0, 0, 0, velocity)  -- Move bird based on velocity
+-- Start the game
+local function startGame()
+    -- Hide the menu
+    menuFrame.Visible = false
     
-    if bird.Position.Y.Offset >= screen.AbsoluteSize.Y - floor.Size.Y.Offset - bird.Size.Y.Offset then
-        bird.Position = UDim2.new(0.1, 0, 0.5, 0)  -- Reset bird if it hits the ground
-        velocity = 0
-    end
+    -- Show the game
+    gameFrame.Visible = true
     
-    -- Move pipes
-    for _, pipe in pairs(screen:GetChildren()) do
-        if pipe:IsA("ImageLabel") and pipe.Position.X.Offset < 0 then
-            pipe:Destroy()  -- Remove pipe when it goes off-screen
-        elseif pipe:IsA("ImageLabel") then
-            pipe.Position = UDim2.new(pipe.Position.X.Offset - 2/1920, 0, pipe.Position.Y.Offset, 0)  -- Move pipes to the left
+    -- Initialize game variables
+    local velocity = 0
+    local gravity = 0.5
+    local flapSpeed = 0.2
+
+    -- Main game loop
+    while true do
+        velocity = velocity + gravity  -- Apply gravity to the bird
+        bird.Position = bird.Position + UDim2.new(0, 0, 0, velocity)  -- Move bird based on velocity
+        
+        if bird.Position.Y.Offset >= screen.AbsoluteSize.Y - floorImage.Size.Y.Offset - bird.Size.Y.Offset then
+            bird.Position = UDim2.new(0.1, 0, 0.5, 0)  -- Reset bird if it hits the ground
+            velocity = 0
         end
-    end
-    
-    -- Create new pipes
-    if math.random() < 0.01 then
-        createPipe()
+        
+        -- Move pipes
+        for _, pipe in pairs(gameFrame:GetChildren()) do
+            if pipe:IsA("ImageLabel") and pipe.Position.X.Offset < 0 then
+                pipe:Destroy()  -- Remove pipe when it goes off-screen
+            elseif pipe:IsA("ImageLabel") then
+                pipe.Position = UDim2.new(pipe.Position.X.Offset - 2/1920, 0, pipe.Position.Y.Offset, 0)  -- Move pipes to the left
+            end
+        end
+        
+        -- Create new pipes
+        if math.random() < 0.01 then
+            createPipe()
+        end
+        
+        wait(0.016)  -- Run at ~60 FPS
     end
 end
 
--- Listen to player input for flapping
+-- Button click event
+startButton.MouseButton1Click:Connect(startGame)
+
+-- Flapping Mechanism
 mouse.KeyDown:Connect(function(key)
     if key == " " then  -- Spacebar to flap
         flap()
     end
 end)
-
--- Main game loop
-while true do
-    update()
-    wait(0.016)  -- Run at ~60 FPS
-end
