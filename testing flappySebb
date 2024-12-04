@@ -1,128 +1,125 @@
--- Game Variables
-local player = game.Players.LocalPlayer
-local screen = player.PlayerGui:WaitForChild("ScreenGui")
-local mouse = player:GetMouse()
+-- Create the main GUI
+local v0 = Instance.new("ScreenGui")
+v0.Name = "FlappyBirdGame"
+v0.IgnoreGuiInset = true
+v0.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
--- Assets
-local background = "rbxassetid://135980554202860"
-local floor = "rbxassetid://129587718897885"
-local pipe = "rbxassetid://87512883198055"
-local downflap = "rbxassetid://127638108888162"
-local midflap = "rbxassetid://72207004690891"
-local upflap = "rbxassetid://133705047906282"
+-- Main frame for the game
+local v4 = Instance.new("Frame")
+v4.Size = UDim2.new(0, 1066 - (68 + 997), 0, 1170 - (226 + 1044))
+v4.BackgroundColor3 = Color3.fromRGB(135, 206, 250)
+v4.Parent = v0
 
--- Create a Menu GUI
-local menuFrame = Instance.new("Frame")
-menuFrame.Size = UDim2.new(1, 0, 1, 0)
-menuFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-menuFrame.BackgroundTransparency = 0.5
-menuFrame.Parent = screen
+-- Background frame
+local v8 = Instance.new("Frame")
+v8.Size = UDim2.new(0, 957 - (892 + 65), 0, 30)
+v8.Position = UDim2.new(0.2, 0, 0.5, -15)
+v8.BackgroundColor3 = Color3.fromRGB(255, 223, 0)
+v8.Parent = v4
 
-local startButton = Instance.new("TextButton")
-startButton.Text = "Start Game"
-startButton.Size = UDim2.new(0, 200, 0, 50)
-startButton.Position = UDim2.new(0.5, -100, 0.5, -25)
-startButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-startButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-startButton.Parent = menuFrame
+-- Bird frame (main object to move)
+local v13 = Instance.new("Frame")
+v13.Size = UDim2.new(0, 4 + 1, 0, 12 - 7)
+v13.Position = UDim2.new(0, 0, 0, 0)
+v13.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+v13.Parent = v8
 
--- Game Elements (Initially hidden)
-local gameFrame = Instance.new("Frame")
-gameFrame.Size = UDim2.new(1, 0, 1, 0)
-gameFrame.BackgroundTransparency = 1
-gameFrame.Parent = screen
+-- Frame for game physics
+local v18 = Instance.new("Frame")
+v18.Size = UDim2.new(0, 1002 - (915 + 82), 0, 14 - 9)
+v18.Position = UDim2.new(1, 0, 0, 0)
+v18.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+v18.Parent = v8
 
-local backgroundImage = Instance.new("ImageLabel")
-backgroundImage.Image = background
-backgroundImage.Size = UDim2.new(1, 0, 1, 0)
-backgroundImage.Parent = gameFrame
+-- Jump Button
+local v23 = Instance.new("TextButton")
+v23.Size = UDim2.new(0, 100, 0, 50)
+v23.Position = UDim2.new(0.5, -50, 0.9, -75)
+v23.Text = "Jump"
+v23.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+v23.TextColor3 = Color3.fromRGB(0, 0, 0)
+v23.Parent = v4
 
-local floorImage = Instance.new("ImageLabel")
-floorImage.Image = floor
-floorImage.Size = UDim2.new(1, 0, 0.1, 0)
-floorImage.Position = UDim2.new(0, 0, 0.9, 0)
-floorImage.Parent = gameFrame
+-- Exit Button
+local v29 = Instance.new("TextButton")
+v29.Size = UDim2.new(0, 100, 0, 30)
+v29.Position = UDim2.new(1, -130, 0, 10)
+v29.Text = "Exit"
+v29.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+v29.TextColor3 = Color3.fromRGB(255, 255, 255)
+v29.Parent = v4
 
-local bird = Instance.new("ImageLabel")
-bird.Image = downflap  -- Starting flap (downflap)
-bird.Size = UDim2.new(0, 50, 0, 50)
-bird.Position = UDim2.new(0.1, 0, 0.5, 0)
-bird.Parent = gameFrame
+-- Game variables
+local velocity = 0
+local gravity = 0.5
+local flapPower = -10
+local isFlapping = false
+local gameOver = false
 
--- Pipe setup
-local function createPipe()
-    local pipeUp = Instance.new("ImageLabel")
-    pipeUp.Image = pipe
-    pipeUp.Size = UDim2.new(0, 60, 0, math.random(200, 300))  -- Random height for the top pipe
-    pipeUp.Position = UDim2.new(1, 0, 0, 0)
-    pipeUp.Parent = gameFrame
-
-    local pipeDown = Instance.new("ImageLabel")
-    pipeDown.Image = pipe
-    pipeDown.Size = UDim2.new(0, 60, 0, screen.AbsoluteSize.Y - pipeUp.Size.Y.Offset - 150)
-    pipeDown.Position = UDim2.new(1, 0, 0, pipeUp.Size.Y.Offset + 150)
-    pipeDown.Parent = gameFrame
-
-    return pipeUp, pipeDown
-end
-
--- Flapping Mechanism
+-- Function to handle the jump (flap)
 local function flap()
-    if velocity <= 0 then
-        bird.Image = upflap  -- Up flap image
-    else
-        bird.Image = downflap  -- Down flap image
+    if not gameOver then
+        velocity = flapPower
+        isFlapping = true
     end
-    velocity = -8  -- Set an initial velocity for the bird to move upwards
 end
 
--- Start the game
-local function startGame()
-    -- Hide the menu
-    menuFrame.Visible = false
-    
-    -- Show the game
-    gameFrame.Visible = true
-    
-    -- Initialize game variables
-    local velocity = 0
-    local gravity = 0.5
-    local flapSpeed = 0.2
+-- Function to check for collisions with the ground or pipes
+local function checkCollisions()
+    if v13.Position.Y.Offset >= v4.AbsoluteSize.Y - v13.Size.Y.Offset then
+        -- Collide with the ground
+        gameOver = true
+        print("Game Over! You hit the ground.")
+    end
+end
 
-    -- Main game loop
+-- Function to create pipes
+local function createPipe()
+    local pipe = Instance.new("Frame")
+    pipe.Size = UDim2.new(0, 60, 0, math.random(100, 400)) -- Random height for the pipe
+    pipe.Position = UDim2.new(1, 0, 0, math.random(100, 400))
+    pipe.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+    pipe.Parent = v4
+
+    -- Move pipes across the screen
+    spawn(function()
+        while pipe.Position.X.Offset > -pipe.Size.X.Offset do
+            if gameOver then return end
+            pipe.Position = pipe.Position - UDim2.new(0.01, 0, 0, 0)
+            wait(0.016) -- Simulate 60 FPS
+        end
+        pipe:Destroy() -- Remove the pipe when it's off-screen
+    end)
+end
+
+-- Function to handle the game loop
+local function gameLoop()
     while true do
-        velocity = velocity + gravity  -- Apply gravity to the bird
-        bird.Position = bird.Position + UDim2.new(0, 0, 0, velocity)  -- Move bird based on velocity
-        
-        if bird.Position.Y.Offset >= screen.AbsoluteSize.Y - floorImage.Size.Y.Offset - bird.Size.Y.Offset then
-            bird.Position = UDim2.new(0.1, 0, 0.5, 0)  -- Reset bird if it hits the ground
-            velocity = 0
+        if gameOver then
+            break
         end
         
-        -- Move pipes
-        for _, pipe in pairs(gameFrame:GetChildren()) do
-            if pipe:IsA("ImageLabel") and pipe.Position.X.Offset < 0 then
-                pipe:Destroy()  -- Remove pipe when it goes off-screen
-            elseif pipe:IsA("ImageLabel") then
-                pipe.Position = UDim2.new(pipe.Position.X.Offset - 2/1920, 0, pipe.Position.Y.Offset, 0)  -- Move pipes to the left
-            end
-        end
-        
-        -- Create new pipes
+        velocity = velocity + gravity -- Apply gravity
+        v13.Position = v13.Position + UDim2.new(0, 0, 0, velocity) -- Move bird based on velocity
+        checkCollisions()
+
+        -- Create pipes at regular intervals
         if math.random() < 0.01 then
             createPipe()
         end
-        
-        wait(0.016)  -- Run at ~60 FPS
+
+        wait(0.016) -- Simulate 60 FPS
     end
 end
 
--- Button click event
-startButton.MouseButton1Click:Connect(startGame)
-
--- Flapping Mechanism
-mouse.KeyDown:Connect(function(key)
-    if key == " " then  -- Spacebar to flap
-        flap()
-    end
+-- Button clicks
+v23.MouseButton1Click:Connect(function()
+    flap()
 end)
+
+v29.MouseButton1Click:Connect(function()
+    v0:Destroy() -- Destroy the GUI when the exit button is clicked
+end)
+
+-- Start the game loop when the game starts
+gameLoop()
