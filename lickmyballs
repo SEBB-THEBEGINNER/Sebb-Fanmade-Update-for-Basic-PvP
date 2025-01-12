@@ -1,0 +1,177 @@
+-- Open source script initialization
+local repo = 'https://raw.githubusercontent.com/deividcomsono/LinoriaLib/main/'
+local Library = loadstring(game:HttpGet(repo .. 'Library.lua'))()
+local ThemeManager = loadstring(game:HttpGet(repo .. 'addons/ThemeManager.lua'))()
+local SaveManager = loadstring(game:HttpGet(repo .. 'addons/SaveManager.lua'))()
+local Options = getgenv().Linoria.Options
+local Toggles = getgenv().Linoria.Toggles
+
+-- Library configuration
+Library.ShowToggleFrameInKeybinds = true
+Library.ShowCustomCursor = true
+Library.NotifySide = "Right"
+
+-- Window creation
+local Window = Library:CreateWindow({
+    Title = 'SRivls Hub | Rivals',
+    Center = true,
+    AutoShow = true,
+    Resizable = true,
+    ShowCustomCursor = true,
+    NotifySide = "Right",
+    TabPadding = 8,
+    MenuFadeTime = 0.2
+})
+
+-- Tabs setup
+local Tabs = {
+    Discord = Window:AddTab('Info'),
+    Main = Window:AddTab('Main'),
+    Esp = Window:AddTab('Esp'),
+    ['UI Settings'] = Window:AddTab('UI Settings'),
+}
+
+-- Group boxes and buttons
+local MainGroupBox = Tabs.Main:AddLeftGroupbox('Aimbot')
+local DiscordGroupBox = Tabs.Discord:AddLeftGroupbox('Discord')
+
+DiscordGroupBox:AddButton({
+    Text = 'Copy Discord Link',
+    Func = function()
+        setclipboard("discord.gg/bYb3EweNk7")
+    end,
+    DoubleClick = false,
+})
+
+MainGroupBox:AddLabel('Auto farm [Coming Soon]')
+
+-- Blood loss notification logic
+getgenv().BloodLossNotificationEnabled = false
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local function notifyBloodLoss(player)
+    if getgenv().BloodLossNotificationEnabled and player and player.Character then
+        local humanoid = player.Character:FindFirstChild("Humanoid")
+        if humanoid then
+            local health = math.floor(humanoid.Health)
+            Library:Notify("Name: " .. player.Name .. " Health: " .. health)
+        else
+            Library:Notify(player.Name .. " is bleeding, but health is unknown")
+        end
+    else
+        Library:Notify("Blood loss detected, but the player is invalid")
+    end
+end
+
+local function trackPlayer(player)
+    if player == LocalPlayer then return end
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:WaitForChild("Humanoid")
+
+    humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+        if humanoid.Health < humanoid.MaxHealth and humanoid.Health > 0 then
+            notifyBloodLoss(player)
+        end
+    end)
+
+    player.CharacterAdded:Connect(function(newCharacter)
+        local newHumanoid = newCharacter:WaitForChild("Humanoid")
+        newHumanoid:GetPropertyChangedSignal("Health"):Connect(function()
+            if newHumanoid.Health < newHumanoid.MaxHealth and newHumanoid.Health > 0 then
+                notifyBloodLoss(player)
+            end
+        end)
+    end)
+end
+
+for _, player in ipairs(Players:GetPlayers()) do
+    trackPlayer(player)
+end
+Players.PlayerAdded:Connect(trackPlayer)
+
+-- ESP configuration
+local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/linemaster2/esp-library/main/library.lua"))()
+
+ESP.Enabled = false
+ESP.ShowBox = false
+ESP.ShowName = false
+ESP.ShowHealth = false
+ESP.ShowTracer = false
+ESP.ShowDistance = false
+ESP.ShowSkeletons = false
+
+-- ESP settings
+local ESP_SETTINGS = {
+    BoxOutlineColor = Color3.new(0, 0, 0),
+    BoxColor = Color3.new(1, 1, 1),
+    NameColor = Color3.new(1, 1, 1),
+    HealthOutlineColor = Color3.new(0, 0, 0),
+    HealthHighColor = Color3.new(0, 1, 0),
+    HealthLowColor = Color3.new(1, 0, 0),
+    Teamcheck = false,
+    WallCheck = false,
+    Enabled = false,
+    ShowBox = false,
+    ShowName = false,
+    ShowHealth = false,
+    ShowDistance = false,
+    ShowSkeletons = false,
+    ShowTracer = false,
+    TracerColor = Color3.new(1, 1, 1),
+    TracerThickness = 2,
+    SkeletonsColor = Color3.new(1, 1, 1),
+    TracerPosition = "Bottom",
+}
+
+-- Aimbot setup
+local aimbotEnabled = false
+local wallCheckEnabled = false
+local aimAtPart = "HumanoidRootPart"
+
+local function getClosestTarget()
+    local Cam = workspace.CurrentCamera
+    local Players = game:GetService("Players")
+    local localPlayer = Players.LocalPlayer
+    local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
+    local localRoot = character:WaitForChild("HumanoidRootPart")
+    local nearestTarget = nil
+    local shortestDistance = math.huge
+
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= localPlayer then
+            local target = player.Character
+            if target and target:FindFirstChild("Humanoid") and target:FindFirstChild(aimAtPart) then
+                local distance = (target[aimAtPart].Position - localRoot.Position).Magnitude
+                if distance < shortestDistance then
+                    shortestDistance = distance
+                    nearestTarget = target
+                end
+            end
+        end
+    end
+    return nearestTarget
+end
+
+local function aimAtTarget()
+    local runService = game:GetService("RunService")
+    runService.RenderStepped:Connect(function()
+        if aimbotEnabled then
+            local target = getClosestTarget()
+            if target and target:FindFirstChild(aimAtPart) then
+                workspace.CurrentCamera.CFrame = CFrame.new(workspace.CurrentCamera.CFrame.Position, target[aimAtPart].Position)
+            end
+        end
+    end)
+end
+
+MainGroupBox:AddToggle('Enable Aimbot', {
+    Text = 'Aimbot',
+    Default = false,
+    Callback = function(state)
+        aimbotEnabled = state
+        if state then aimAtTarget() end
+    end
+})
+
+-- Additional features omitted for brevity...
